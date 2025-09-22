@@ -2,9 +2,11 @@ import pygame
 import sys
 import math
 
+from objects.ModulePygame import GameManager
+
 pygame.init()
 
-screen = pygame.display.set_mode((1920, 1080))
+screen = GameManager.createWindow(1920,1080,"Tank 2d")
 clock = pygame.time.Clock()
 
 square = pygame.rect.Rect(0, 0, 100, 100)

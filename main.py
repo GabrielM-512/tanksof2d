@@ -9,7 +9,7 @@ clock = pygame.time.Clock()
 
 square = pygame.rect.Rect(0, 0, 100, 100)
 
-square_gfx_template = pygame.image.load('./assets/gfx/player.png').convert_alpha()
+square_gfx_template = pygame.image.load('./assets/PNG/Hulls_Color_D/Hull_02.png').convert_alpha()
 
 square_gfx = square_gfx_template
 

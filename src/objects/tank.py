@@ -9,7 +9,15 @@ class Tank:
         self.icon_display = self.icon_base
 
     def move(self):
-        pass
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            self.rect.y -= 5
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            self.rect.y += 5
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            self.rect.x -= 5
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.rect.x += 5
 
     def turn_turret(self):
         try:

@@ -10,6 +10,7 @@ class Tank:
         self.bullets = []
         self.health = 100
         self.maxBullets = 5
+        self.angle = 0
 
     def move(self):
         self.turn_turret(0)
@@ -34,15 +35,17 @@ class Tank:
                 rot_degree += math.pi
                 
             self.icon_display = pygame.transform.rotate(self.icon_base, rot_degree * 180 / math.pi)
-
+            self.angle = rot_degree
         except ZeroDivisionError:
             if mouse_pos[0] - newRect.centerx < 0:
                 self.icon_display = pygame.transform.rotate(self.icon_base, 90)
+                self.angle = 90
             elif mouse_pos[0] - newRect.centerx > 0:
                 self.icon_display = pygame.transform.rotate(self.icon_base, -90)
-    
+                self.angle = -90
+
     def shoot(self,pos):
-        bullet = Bullet(pos)
+        bullet = Bullet(self.bullets,(self.rect.x,self.rect.y),pos,self.angle)
         self.bullets.append(bullet)
     
     def draw(self, screen):

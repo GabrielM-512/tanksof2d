@@ -12,13 +12,3 @@ class GameManager:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
-    def playerInputs(player):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            player.y -= 5
-        if keys[pygame.K_DOWN]:
-            player.y += 5
-        if keys[pygame.K_LEFT]:
-            player.x -= 5
-        if keys[pygame.K_RIGHT]:
-            player.x += 5

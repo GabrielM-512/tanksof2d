@@ -13,8 +13,8 @@ class Tank:
 
     def turn_turret(self):
         try:
-            mouse_pos = pygame.mouse.get_pos
-            rot_degree = math.atan((mouse_pos[0] - self.rect.centerx) / (mouse_pos[1] - square.centery))
+            mouse_pos = pygame.mouse.get_pos()
+            rot_degree = math.atan((mouse_pos[0] - self.rect.centerx) / (mouse_pos[1] - self.rect.centery))
             if mouse_pos[1] - self.rect.centery > 0:
                 rot_degree += math.pi
                 

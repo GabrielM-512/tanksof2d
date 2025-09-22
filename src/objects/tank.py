@@ -5,7 +5,7 @@ class tank:
 
     def __init__(self):
         self.rect = pygame.rect.Rect()
-        #self.icon_base = pygame.image.load()
+        self.icon_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_02.png")
         self.icon_display = self.icon_base
 
     def move(self):

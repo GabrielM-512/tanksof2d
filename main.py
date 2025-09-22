@@ -38,16 +38,7 @@ while True:
 		square.y -= 10
 
 	# visual square drehen
-	try:
-		rot_degree = math.atan((mouse_pos[0] - square.centerx) / (mouse_pos[1] - square.centery))
-		if mouse_pos[1] - square.centery > 0:
-			rot_degree += math.pi
-		square_gfx = pygame.transform.rotate(square_gfx_template, rot_degree * 180 / math.pi)
-	except ZeroDivisionError:
-		if mouse_pos[0] - square.centerx < 0:
-			square_gfx = pygame.transform.rotate(square_gfx_template, 90)
-		elif mouse_pos[0] - square.centerx > 0:
-			square_gfx = pygame.transform.rotate(square_gfx_template, -90)
+	
 		
 	
 		

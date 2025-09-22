@@ -6,11 +6,16 @@ from src.objects.Tank import Tank
 
 pygame.init()
 
+
+
 screen = GameManager.createWindow(1440,900,"Tank 2d")
 clock = pygame.time.Clock()
 
-tank = Tank(True)
-tanknpc = Tank(False)
+tank = Tank()
+
+gameManager = GameManager(tank, "localhost")
+
+tanknpc = Tank()
 
 while True:
 	GameManager.defineEvents()

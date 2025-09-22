@@ -2,6 +2,7 @@ import pygame
 import math
 from src.objects.Hitbox import Hitbox
 from src.objects.Shooting import Bullet
+
 class Tank:
     def __init__(self):
         self.icon_base = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_02.png")

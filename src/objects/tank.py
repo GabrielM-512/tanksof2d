@@ -23,16 +23,17 @@ class Tank:
     def turn_turret(self, angle):
         try:
             mouse_pos = pygame.mouse.get_pos()
-            rot_degree = math.atan((mouse_pos[0] - self.rect.x) / (mouse_pos[1] - self.rect.y))
-            if mouse_pos[1] - self.rect.y > 0:
+            newRect = self.icon_display.get_rect(center=(self.rect.x + self.icon_display.get_width() // 2, self.rect.y + self.icon_display.get_height() // 2))
+            rot_degree = math.atan((mouse_pos[0] - newRect.centerx) / (mouse_pos[1] - newRect.centery))
+            if mouse_pos[1] - newRect.centery > 0:
                 rot_degree += math.pi
                 
             self.icon_display = pygame.transform.rotate(self.icon_base, rot_degree * 180 / math.pi)
 
         except ZeroDivisionError:
-            if mouse_pos[0] - self.rect.x < 0:
+            if mouse_pos[0] - newRect.centerx < 0:
                 self.icon_display = pygame.transform.rotate(self.icon_base, 90)
-            elif mouse_pos[0] - self.rect.x > 0:
+            elif mouse_pos[0] - newRect.centerx > 0:
                 self.icon_display = pygame.transform.rotate(self.icon_base, -90)
 
     def shoot(self):

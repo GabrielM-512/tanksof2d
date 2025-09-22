@@ -6,8 +6,6 @@ from src.objects.Tank import Tank
 
 pygame.init()
 
-
-
 screen = GameManager.createWindow(1440,900,"Tank 2d")
 clock = pygame.time.Clock()
 
@@ -34,6 +32,5 @@ while True:
 		pass
 	pygame.display.update()
 	
-	# framerate limitieren
 	clock.tick(60)
 	

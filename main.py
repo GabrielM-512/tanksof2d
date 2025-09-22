@@ -2,6 +2,7 @@ import pygame
 import sys
 import math
 from src.objects.ModulePygame import GameManager
+from src.objects.Tank import Tank
 
 pygame.init()
 
@@ -14,6 +15,8 @@ square_gfx_template = pygame.image.load('./assets/PNG/Hulls_Color_D/Hull_02.png'
 
 square_gfx = square_gfx_template
 
+tank = Tank()
+
 while True:
 	GameManager.defineEvents()
 
@@ -23,6 +26,9 @@ while True:
 
 	screen.fill((0, 0, 0))
 	screen.blit(square_gfx, square)
+
+	tank.move()
+	tank.draw(screen)
 	
 	pygame.display.update()
 	

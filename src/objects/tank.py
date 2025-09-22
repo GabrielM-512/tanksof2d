@@ -4,7 +4,7 @@ import math
 class Tank:
 
     def __init__(self):
-        self.rect = pygame.rect.Rect()
+        self.rect = pygame.rect.Rect(0, 0, 100, 100)
         self.icon_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_02.png")
         self.icon_display = self.icon_base
 
@@ -37,5 +37,5 @@ class Tank:
     def shoot(self):
         pass
     
-    def draw(self, screen : pygame.display):
+    def draw(self, screen):
         screen.blit(self.icon_display, self.rect)

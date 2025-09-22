@@ -1,10 +1,10 @@
-import pygame # type: ignore
+import pygame
 import sys
 import math
 
 pygame.init()
 
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((1920, 1080))
 clock = pygame.time.Clock()
 
 square = pygame.rect.Rect(0, 0, 100, 100)

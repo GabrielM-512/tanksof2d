@@ -9,7 +9,7 @@ class GameManager:
         return screen
     def defineEvents():
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
     def playerInputs(player):

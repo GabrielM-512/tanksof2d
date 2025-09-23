@@ -2,14 +2,20 @@ import pygame
 import sys
 import math
 
+from src.system.ConnectionManager import ConnectionManager
 from src.objects.Tank import Tank
 
 class GameManager:
-    def __init__(self, ip: str, tankobject : Tank = None):
+    def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None):
         self.tank = tankobject
-        self.serverIP = ip
 
         self.screen = None
+        self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
+
+        try:
+            self.connection.connect()
+        except:
+            print("No connection achieved, launched in single-player testing mode")
 
 
     def create_window(self, width, height, description):
@@ -22,6 +28,7 @@ class GameManager:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                self.kill()
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -68,3 +75,9 @@ class GameManager:
                 angle = 90
         
         self.tank.turret_angle = angle
+
+    def handle_connection(self, msg : dict):
+        pass
+
+    def kill(self):
+        self.connection.close()

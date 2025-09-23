@@ -2,13 +2,14 @@ import socket
 import threading
 import json
 
-class ChatClient:
-    def __init__(self, host="127.0.0.1", port=5000):
+class ConnectionManager:
+    def __init__(self, host="127.0.0.1", port=5000, callback = None):
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.running = False
         self.buffer = ""  # for accumulating partial data
+        self.callback = callback
 
     def connect(self):
         """Connects to the server and starts listening for messages."""
@@ -41,8 +42,15 @@ class ChatClient:
         try:
             data = json.loads(msg)
             print("Received JSON:", data)
+
+            if self.callback is None:
+                raise Exception("No callback function attached")
+            else:
+                self.callback(data)
         except json.JSONDecodeError:
             print("Invalid JSON:", msg)
+
+
 
     def send(self, obj):
         """Send a JSON-serializable object to the server."""
@@ -62,15 +70,3 @@ class ChatClient:
             self.sock.close()
         except:
             pass
-
-
-if __name__ == "__main__":
-    client = ChatClient()
-    client.connect()
-
-    # Example usage: send a move command
-    client.send({"action": "move", "player_id": 1, "x": 42, "y": 17})
-
-    import time
-    time.sleep(3)
-    client.close()

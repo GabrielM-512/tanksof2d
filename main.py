@@ -4,13 +4,10 @@ from src.objects.Tank import Tank
 from src.system.ConnectionManager import ConnectionManager
 
 pygame.init()
-connectionManager = ConnectionManager()
-connectionManager.connect()
-
 
 clock = pygame.time.Clock()
 
-gameManager = GameManager("localhost")
+gameManager = GameManager(ip="localhost", port=5000)
 
 tank = Tank()
 gameManager.tank = tank

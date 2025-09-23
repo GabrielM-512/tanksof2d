@@ -1,23 +1,29 @@
 import socket
-from threading import Lock  
-import asyncio 
+import threading
 
-class ConnectionManager:
-    def __init__(self):
-        self.connections = {}
-        self.lock = Lock()
+HOST = "127.0.0.1"
+PORT = 5000
 
-    async def connect(self, address):
-        reader, writer = await asyncio.open_connection(*address)
-        async with self.lock:
-            self.connections[address] = (reader, writer)
+def receive(sock):
+    while True:
+        try:
+            msg = sock.recv(1024).decode()
+            if msg:
+                print(msg)
+        except:
+            break
 
-    async def disconnect(self, address):
-        async with self.lock:
-            if address in self.connections:
-                reader, writer = self.connections.pop(address)
-                writer.close()
-                await writer.wait_closed()
+def start_client():
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((HOST, PORT))
 
+    # start thread to receive messages
+    threading.Thread(target=receive, args=(client,), daemon=True).start()
 
-    
+    # send messages from input
+    while True:
+        msg = input()
+        client.sendall(msg.encode())
+
+if __name__ == "__main__":
+    start_client()

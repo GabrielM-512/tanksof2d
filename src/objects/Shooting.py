@@ -15,7 +15,7 @@ class Bullet:
         self.rect.centerx = nPos[0]
         self.rect.centery = nPos[1]
 
-        self.speed = 0
+        self.speed = 15
         self.angle = ang
 
         self.length = 500

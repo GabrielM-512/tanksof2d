@@ -29,8 +29,10 @@ class GameManager:
                     self.tank.shoot(pygame.mouse.get_pos())
 
 
-    def update(self):
 
+    def update(self):
+        if self.screen is None:
+            raise Exception("Screen was not defined")
         self.handle_input()
         self.tank.update(self.screen)
 
@@ -51,6 +53,7 @@ class GameManager:
             self.tank.chassis_angle += self.tank.ROTATION_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
+
 
         pos = pygame.mouse.get_pos()
         try:

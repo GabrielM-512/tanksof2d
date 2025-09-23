@@ -13,13 +13,13 @@ gameManager.tank = tank
 
 gameManager.create_window(1920, 1080, "Tank 2d")
 
+
 while True:
 	gameManager.handle_events()
 
 	mouse_pos = pygame.mouse.get_pos()
 	
 	gameManager.screen.fill((30,30,30))
-
 	gameManager.update()
 
 	pygame.display.update()

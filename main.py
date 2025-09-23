@@ -13,8 +13,6 @@ tank = Tank()
 
 gameManager = GameManager(tank, "localhost")
 
-tanknpc = Tank()
-
 while True:
 	GameManager.defineEvents()
 
@@ -22,18 +20,10 @@ while True:
 	
 	screen.fill((30,30,30))
 
-	tank.move()
-	tank.update(screen)
-
-	tanknpc.move()
-	tanknpc.update(screen)
-
-	#if tank.hitbox.collides(tanknpc.hitboxsd):
-#ddddddd		pass
+	gameManager.update(screen)
 
 	pygame.display.update()
 	
 	dT = clock.tick(120)
 	fps = clock.get_fps()
-	print(fps)
 	

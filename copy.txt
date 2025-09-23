@@ -1,0 +1,63 @@
+    def draw(self, screen):
+            
+            """olist = list(self.hitbox.hitbox.outline())
+            after_list = []
+            for point in olist:
+                x = point[0] + self.hitbox.x
+                y = point[1] + self.hitbox.y
+
+                after_list.append((x,y))
+            
+            pygame.draw.polygon(screen,(200,150,150),after_list,0)"""
+
+            self.final_display = self.chassis_display.__copy__()
+
+            old_pos = self.rect.center
+
+            self.chassis_angle_rad = math.radians(self.chassis_angle)
+            self.chassis_display = pygame.transform.rotate(self.chassis_display_base, self.chassis_angle)
+
+            self.rect = self.chassis_display.get_rect()
+            self.rect.center = old_pos
+
+            self.chassis_connection_point = pos_after_rot(self.base_chassis_connect_point, -self.chassis_angle, (0, 0))
+
+            self.chassis_connection_point[0] += old_pos[0]
+            self.chassis_connection_point[1] += old_pos[1]
+
+            self.final_display.blit(self.chassis_display, (0, 0))
+
+
+            
+
+            old_turr_rect = self.turret_icon.get_rect()
+
+            self.turret_icon = pygame.transform.rotate(self.turret_base_icon, self.turret_angle)
+            turr_connect_point = pos_after_rot(self.base_turret_connect_point, -self.turret_angle, (0, 0))
+
+            turr_rect = self.turret_icon.get_rect()
+
+            turr_rect.center = old_turr_rect.center
+
+            offsetx = self.chassis_connection_point[0] - self.rect.x
+            offsety = self.chassis_connection_point[1] - self.rect.y
+
+            self.final_display.blit(self.turret_icon, self.rect)
+
+
+
+
+
+
+
+
+
+            
+            
+            pygame.draw.rect(screen, (255, 0, 0), (self.chassis_connection_point, (2, 2)))
+            pygame.draw.rect(screen, (0, 255, 0), (self.rect.center, (2, 2)))
+            pygame.draw.rect(self.final_display, (255, 255, 255), ((offsetx, offsety), (2, 2)))
+
+            screen.blit(self.final_display, self.rect)
+
+            print(offsetx, offsety)

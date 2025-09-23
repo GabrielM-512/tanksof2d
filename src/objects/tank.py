@@ -6,7 +6,10 @@ from src.objects.Hitbox import Hitbox
 from src.objects.Shooting import Bullet
 
 
-
+"""
+Class for representing the Tanks from both the local player, other players and NPCs.
+Movement is handled by the GameManager class.
+"""
 
 
 def pos_after_rot(point, angle, pivot):
@@ -22,60 +25,47 @@ def pos_after_rot(point, angle, pivot):
 
     ]
 
+def transparent_surface(width, height):
+    surface = pygame.Surface((width, height), pygame.SRCALPHA)
+    surface.fill((0, 0, 0, 0))
+    return surface
+
 class Tank:
 
+
+    MOVEMENT_SPEED = 5
+    ROTATION_SPEED = 5
+    
     def __init__(self):
 
 
-        self.icon_base = pygame.image.load("assets/PNG/Hulls_Color_D/Hull_02.png")
-        self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_02.png")
+        self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_D/Hull_02.png")
+        self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_01.png")
+        self.final_display_base = transparent_surface(self.chassis_display_base.get_width() + 200, self.chassis_display_base.get_height() + 200)
 
-        self.rect = self.icon_base.get_rect()
+        self.rect = self.chassis_display_base.get_rect()
+        self.turretRect = self.turret_base_icon.get_rect()
 
         self.base_chassis_connect_point = (0, 22)
-        self.base_turret_connect_point = (42, 147)
+        self.base_turret_connect_point = (0, 54)
 
         self.chassis_connection_point = self.base_chassis_connect_point
         self.turret_connection_point = self.base_turret_connect_point
 
-        self.icon = self.icon_base.__copy__()
+        self.final_display = self.final_display_base.__copy__()
+        self.chassis_display = self.chassis_display_base.__copy__()
         self.turret_icon = self.turret_base_icon.__copy__()
 
         self.chassis_angle : float = 0
         self.turret_angle : float = 0
 
-        self.chassis_angle_rad = 0
-        self.turret_angle_rad = 0
-
-        self.hitbox = Hitbox(self.icon, 10, 10)
+        self.hitbox = Hitbox(self.chassis_display, 10, 10)
         self.bullets = []
         self.health = 100
         self.maxBullets = 5
 
         self.offsetx = self.hitbox.x
         self.offsety = self.hitbox.y
-
-    def move(self):
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.hitbox.y -= 5
-            self.rect.y -= 5
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.hitbox.y += 5
-            self.rect.y += 5
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.hitbox.x -= 5
-            self.rect.x -= 5
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.hitbox.x += 5
-            self.rect.x += 5
-        if pygame.mouse.get_pressed()[0]:
-            self.shoot(pygame.mouse.get_pos())
-        if keys[pygame.K_q]:
-            self.chassis_angle += 5
-        elif keys[pygame.K_e]:
-            self.chassis_angle -= 5
     
     def shoot(self,pos):
         #bullet = Bullet(pos)
@@ -93,12 +83,13 @@ class Tank:
             
             pygame.draw.polygon(screen,(200,150,150),after_list,0)
 
+            self.final_display = self.final_display_base.__copy__()
+
             old_pos = self.rect.center
 
-            self.chassis_angle_rad = math.radians(self.chassis_angle)
-            self.icon = pygame.transform.rotate(self.icon_base, self.chassis_angle)
+            self.chassis_display = pygame.transform.rotate(self.chassis_display_base, self.chassis_angle)
 
-            self.rect = self.icon.get_rect()
+            self.rect = self.chassis_display.get_rect()
             self.rect.center = old_pos
 
             self.chassis_connection_point = pos_after_rot(self.base_chassis_connect_point, -self.chassis_angle, (0, 0))
@@ -106,10 +97,38 @@ class Tank:
             self.chassis_connection_point[0] += old_pos[0]
             self.chassis_connection_point[1] += old_pos[1]
 
-            screen.blit(self.icon, self.rect)
-            
+            self.final_display.blit(self.chassis_display, (100, 100))
+
+
+
+
+            old_turr_rect = self.turretRect
+
+            self.turret_icon = pygame.transform.rotate(self.turret_base_icon, self.turret_angle)
+
+            self.turretRect = self.turret_icon.get_rect()
+
+            turr_connect_point = pos_after_rot(self.base_turret_connect_point, -self.turret_angle, (0, 0))
+
+
+
+            offsetx = self.chassis_connection_point[0] - self.rect.centerx
+            offsety = self.chassis_connection_point[1] - self.rect.centery
+
+            local_chassis_x = self.chassis_connection_point[0] - self.rect.x
+            local_chassis_y = self.chassis_connection_point[1] - self.rect.y
+
+            self.turretRect.center = (local_chassis_x - offsetx - turr_connect_point[0] + 100, local_chassis_y - offsety - turr_connect_point[1] + 100)
+
+
+
+            self.final_display.blit(self.turret_icon, (offsetx+self.turretRect.x, offsety+self.turretRect.y))
+
             pygame.draw.rect(screen, (255, 0, 0), (self.chassis_connection_point, (2, 2)))
             pygame.draw.rect(screen, (0, 255, 0), (self.rect.center, (2, 2)))
+            pygame.draw.rect(self.final_display, (255, 255, 255), ((local_chassis_x, local_chassis_y), (2, 2)))
+
+            screen.blit(self.final_display, self.rect)
 
 
     def update(self, screen):
@@ -117,7 +136,7 @@ class Tank:
         self.hitbox.y = self.rect.y
 
         self.draw(screen)
-        self.hitbox.update(self.icon)
+        self.hitbox.update(self.final_display)
         
         if len(self.bullets) > 0:
             for bullet in self.bullets:

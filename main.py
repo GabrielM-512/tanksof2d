@@ -28,9 +28,12 @@ while True:
 	tanknpc.move()
 	tanknpc.update(screen)
 
-	if tank.rect.collides(tanknpc.rect):
-		pass
+	#if tank.hitbox.collides(tanknpc.hitboxsd):
+#ddddddd		pass
+
 	pygame.display.update()
 	
-	clock.tick(60)
+	dT = clock.tick(120)
+	fps = clock.get_fps()
+	print(fps)
 	

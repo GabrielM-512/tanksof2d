@@ -31,6 +31,7 @@ class Bullet:
             self.icon_display = pygame.transform.rotate(self.icon_base,self.angle)
 
     def update(self,screen:pygame.display):
+        self.bullet.update(self.icon_display)
         self.bullet.x += self.vx
         self.bullet.y += self.vy
         self.calcBullet()

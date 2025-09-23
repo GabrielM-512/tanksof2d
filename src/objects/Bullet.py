@@ -1,6 +1,6 @@
 import pygame
 import math
-from src.objects.Hitbox import Hitbox
+from src.system.Hitbox import Hitbox
 
 class Bullet:
     def __init__(self, parent, nPos, ang):

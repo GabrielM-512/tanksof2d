@@ -1,5 +1,5 @@
 import pygame
-from src.objects.GameManager import GameManager
+from src.system.GameManager import GameManager
 from src.objects.Tank import Tank
 
 pygame.init()

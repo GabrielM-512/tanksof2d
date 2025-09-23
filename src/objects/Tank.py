@@ -1,7 +1,7 @@
 import math
 import pygame
 
-from src.objects.Hitbox import Hitbox
+from src.system.Hitbox import Hitbox
 
 from src.objects.Bullet import Bullet
 

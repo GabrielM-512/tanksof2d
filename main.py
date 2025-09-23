@@ -1,24 +1,26 @@
 import pygame
-from src.objects.ModulePygame import GameManager
+from src.objects.GameManager import GameManager
 from src.objects.Tank import Tank
 
 pygame.init()
 
-screen = GameManager.createWindow(1440,900,"Tank 2d")
 clock = pygame.time.Clock()
 
-tank = Tank()
+gameManager = GameManager("localhost")
 
-gameManager = GameManager(tank, "localhost")
+tank = Tank()
+gameManager.tank = tank
+
+gameManager.create_window(1920, 1080, "Tank 2d")
 
 while True:
-	gameManager.defineEvents()
+	gameManager.handle_events()
 
 	mouse_pos = pygame.mouse.get_pos()
 	
-	screen.fill((30,30,30))
+	gameManager.screen.fill((30,30,30))
 
-	gameManager.update(screen)
+	gameManager.update()
 
 	pygame.display.update()
 	

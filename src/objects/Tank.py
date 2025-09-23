@@ -3,7 +3,7 @@ import pygame
 
 from src.objects.Hitbox import Hitbox
 
-from src.objects.Shooting import Bullet
+from src.objects.Bullet import Bullet
 
 
 """

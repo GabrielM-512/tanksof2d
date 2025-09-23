@@ -5,17 +5,21 @@ import math
 from src.objects.Tank import Tank
 
 class GameManager:
-    def __init__(self, tankobject : Tank, ip: str):
+    def __init__(self, ip: str, tankobject : Tank = None):
         self.tank = tankobject
         self.serverIP = ip
 
-    def createWindow(WIDTH, HEIGHT,DESCRIPTION):
+        self.screen = None
+
+
+    def create_window(self, width, height, description):
         pygame.init()
-        screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption(DESCRIPTION)
-        return screen
-    
-    def defineEvents(self):
+        screen = pygame.display.set_mode((width, height))
+        pygame.display.set_caption(description)
+        self.screen = screen
+
+
+    def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
@@ -25,13 +29,16 @@ class GameManager:
                     self.tank.shoot(pygame.mouse.get_pos())
 
 
-
-    def update(self, screen):
+    def update(self):
 
         self.handle_input()
-        self.tank.update(screen)
+        self.tank.update(self.screen)
+
 
     def handle_input(self):
+        if self.tank is None:
+            return
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
@@ -44,8 +51,6 @@ class GameManager:
             self.tank.chassis_angle += self.tank.ROTATION_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
-
-
 
         pos = pygame.mouse.get_pos()
         try:
@@ -60,4 +65,3 @@ class GameManager:
                 angle = 90
         
         self.tank.turret_angle = angle
-        

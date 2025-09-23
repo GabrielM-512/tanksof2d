@@ -1,6 +1,4 @@
 import pygame
-import sys
-import math
 from src.objects.ModulePygame import GameManager
 from src.objects.Tank import Tank
 

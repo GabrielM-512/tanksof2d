@@ -70,6 +70,7 @@ class Tank:
         self.offsety = self.hitbox.y
     
         self.global_connect_point = (0,0)
+
     def shoot(self,pos):
         bullet = Bullet(self.bullets, self.nozzle_position, pygame.mouse.get_pos(), self.turret_angle)
         self.bullets.append(bullet)

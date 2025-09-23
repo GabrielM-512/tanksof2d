@@ -43,7 +43,6 @@ class Tank:
         self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_D/Hull_02.png")
         self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_01.png")
         self.final_display_base = transparent_surface(self.chassis_display_base.get_width() + 200, self.chassis_display_base.get_height() + 200)
-        self.hitbox_viewer = pygame.surface.Surface(((10, 10)))
 
         self.rect = self.chassis_display_base.get_rect()
         self.turretRect = self.turret_base_icon.get_rect()
@@ -72,12 +71,12 @@ class Tank:
     
         self.global_connect_point = (0,0)
     def shoot(self,pos):
-        #bullet = Bullet(self.)
+        bullet = Bullet(self, self.nozzle_position, (0, 0), self.turret_angle)
         pass
 
     def draw(self, screen):
             
-            olist = list(self.hitbox.hitbox.outline())
+            """olist = list(self.hitbox.hitbox.outline())
             after_list = []
             for point in olist:
                 x = point[0] + self.hitbox.x
@@ -85,7 +84,7 @@ class Tank:
 
                 after_list.append((x,y))
             
-            pygame.draw.polygon(screen,(200,150,150),after_list,0)
+            pygame.draw.polygon(screen,(200,150,150),after_list,0)"""
 
             self.final_display = self.final_display_base.__copy__()
 
@@ -147,11 +146,6 @@ class Tank:
     def update(self, screen):
         self.hitbox.x = self.rect.x
         self.hitbox.y = self.rect.y
-
-        self.hitbox_viewer = pygame.surface.Surface((self.final_display.get_size()))
-        self.hitbox_viewer.fill((0,255,0))
-
-        #screen.blit(self.hitbox_viewer, (self.hitbox.x, self.hitbox.y))
 
         self.draw(screen)
         self.hitbox.update(self.final_display)

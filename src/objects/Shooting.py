@@ -3,11 +3,11 @@ import math
 from src.objects.Hitbox import Hitbox
 
 class Bullet:
-    def __init__(self,parent,tPos,mPos,ang):
+    def __init__(self,parent,nPos,mPos,ang):
         self.parent = parent
         self.icon_base = pygame.image.load("assets/PNG/Effects/Medium_Shell.png")
         self.icon_display = self.icon_base
-        self.bullet = Hitbox(self.icon_display,tPos[0],tPos[1])
+        self.bullet = Hitbox(self.icon_display,nPos[0],nPos[1])
         self.mx = mPos[0]
         self.my = mPos[1]
         self.speed = 50
@@ -17,7 +17,7 @@ class Bullet:
 
     def calcBullet(self):
         dx, dy = self.mx - self.bullet.x, self.my - self.bullet.y
-        length = math.hypot(dx, dy)
+        length = 500
    
         if length <= self.speed:  # or some small threshold
             self.destroy()

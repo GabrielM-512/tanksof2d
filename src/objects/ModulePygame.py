@@ -30,28 +30,32 @@ class GameManager:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.tank.rect.y -= 5
+            self.tank.rect.x -= self.tank.MOVEMENT_SPEED * math.sin(math.radians(self.tank.chassis_angle))
+            self.tank.rect.y -= self.tank.MOVEMENT_SPEED * math.cos(math.radians(self.tank.chassis_angle))
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.tank.rect.y += 5
+            self.tank.rect.x += self.tank.MOVEMENT_SPEED * math.sin(math.radians(self.tank.chassis_angle))
+            self.tank.rect.y += self.tank.MOVEMENT_SPEED * math.cos(math.radians(self.tank.chassis_angle))
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.tank.rect.x -= 5
+            self.tank.chassis_angle += self.tank.ROTATION_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.tank.rect.x += 5
-        if keys[pygame.K_q]:
-            self.tank.chassis_angle += 5
-        elif keys[pygame.K_e]:
-            self.tank.chassis_angle -= 5
+            self.tank.chassis_angle -= self.tank.ROTATION_SPEED
 
         if pygame.mouse.get_pressed()[0]:
             self.tank.shoot(pygame.mouse.get_pos())
 
+
+
         pos = pygame.mouse.get_pos()
         try:
-            angle = math.degrees(math.atan((pos[0] - self.tank.chassis_connection_point[0]) / (pos[1] - self.tank.chassis_connection_point[1])))
-            if pos[1] > self.tank.chassis_connection_point[1]:
+            angle = math.degrees(math.atan((pos[0] - self.tank.global_connect_point[0]) / (pos[1] - self.tank.global_connect_point[1])))
+            if pos[1] > self.tank.global_connect_point[1]:
                 angle += 180
+
         except ZeroDivisionError:
-            angle = 0
+            if pos[0] > self.tank.global_connect_point[0]:
+                angle = -90
+            else:
+                angle = 90
         
         self.tank.turret_angle = angle
         

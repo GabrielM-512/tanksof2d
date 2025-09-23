@@ -71,9 +71,9 @@ class Tank:
     
         self.global_connect_point = (0,0)
     def shoot(self,pos):
-        bullet = Bullet(self, self.nozzle_position, (0, 0), self.turret_angle)
-        pass
-
+        bullet = Bullet(self.bullets, self.nozzle_position, pygame.mouse.get_pos(), self.turret_angle)
+        self.bullets.append(bullet)
+        
     def draw(self, screen):
             
             """olist = list(self.hitbox.hitbox.outline())

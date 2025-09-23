@@ -17,8 +17,7 @@ class Bullet:
 
     def calcBullet(self):
         dx, dy = self.mx - self.bullet.x, self.my - self.bullet.y
-        length = 500
-   
+        length = math.hypot(dx,dy)
         if length <= self.speed:  # or some small threshold
             self.destroy()
         else:
@@ -32,8 +31,8 @@ class Bullet:
 
     def update(self,screen:pygame.display):
         self.bullet.update(self.icon_display)
-        self.bullet.x += self.vx
-        self.bullet.y += self.vy
+        self.bullet.x -= self.speed * math.sin(math.radians(self.angle))
+        self.bullet.y -= self.speed * math.cos(math.radians(self.angle))
         self.calcBullet()
         screen.blit(self.icon_display, (self.bullet.x - 64, self.bullet.y - 64))
 

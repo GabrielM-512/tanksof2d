@@ -14,7 +14,7 @@ tank = Tank()
 gameManager = GameManager(tank, "localhost")
 
 while True:
-	GameManager.defineEvents()
+	gameManager.defineEvents()
 
 	mouse_pos = pygame.mouse.get_pos()
 	

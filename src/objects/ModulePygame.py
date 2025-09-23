@@ -15,11 +15,16 @@ class GameManager:
         pygame.display.set_caption(DESCRIPTION)
         return screen
     
-    def defineEvents():
+    def defineEvents(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if self.tank.maxBullets > len(self.tank.bullets):
+                    self.tank.shoot(pygame.mouse.get_pos())
+
+
 
     def update(self, screen):
 
@@ -39,9 +44,6 @@ class GameManager:
             self.tank.chassis_angle += self.tank.ROTATION_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
-
-        if pygame.mouse.get_pressed()[0]:
-            self.tank.shoot(pygame.mouse.get_pos())
 
 
 

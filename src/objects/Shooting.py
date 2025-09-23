@@ -10,7 +10,7 @@ class Bullet:
         self.bullet = Hitbox(self.icon_display,tPos[0],tPos[1])
         self.mx = mPos[0]
         self.my = mPos[1]
-        self.speed = 5
+        self.speed = 50
         self.angle = ang
         self.vx = 0
         self.vy = 0
@@ -28,12 +28,13 @@ class Bullet:
             dir_y = dy / length
             self.vx = dir_x * self.speed
             self.vy = dir_y * self.speed
+            self.icon_display = pygame.transform.rotate(self.icon_base,self.angle)
 
     def update(self,screen:pygame.display):
         self.bullet.x += self.vx
         self.bullet.y += self.vy
-        screen.blit(self.icon_display, (self.bullet.x - 64, self.bullet.y - 64))
         self.calcBullet()
+        screen.blit(self.icon_display, (self.bullet.x - 64, self.bullet.y - 64))
 
     def destroy(self):
         if self in self.parent:

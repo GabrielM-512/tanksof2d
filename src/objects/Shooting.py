@@ -17,16 +17,17 @@ class Bullet:
 
     def calcBullet(self):
         dx, dy = self.mx - self.bullet.x, self.my - self.bullet.y
-        if dx <= 0 and dy <= 0:
-            self.destroy()
         length = math.hypot(dx, dy)
-        if length == 0:
-            length = 1
-        dir_x, dir_y = dx / length, dy / length
-        speed = 10
-
-        self.vx = dir_x * speed
-        self.vy = dir_y * speed
+   
+        if length <= self.speed:  # or some small threshold
+            self.destroy()
+        else:
+            if length == 0:
+                length = 1
+            dir_x = dx / length
+            dir_y = dy / length
+            self.vx = dir_x * self.speed
+            self.vy = dir_y * self.speed
 
     def update(self,screen:pygame.display):
         self.bullet.x += self.vx

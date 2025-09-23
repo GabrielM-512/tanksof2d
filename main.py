@@ -28,7 +28,7 @@ while True:
 	tanknpc.move()
 	tanknpc.update(screen)
 
-	if tank.hitbox.collides(tanknpc.hitbox):
+	if tank.rect.collides(tanknpc.rect):
 		pass
 	pygame.display.update()
 	

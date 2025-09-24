@@ -39,11 +39,16 @@ class Tank:
 
     BULLET_SPAWN_OFFSET = 20
 
-    def __init__(self):
+    def __init__(self, col : str = "Blue"):
 
+        match col:
+            case "Blue":
+                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_D/Hull_02.png")
+                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_01.png")
+            case "Red":
+                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_02.png")
+                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_A/Gun_01.png")
 
-        self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_D/Hull_02.png")
-        self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_01.png")
         self.final_display_base = transparent_surface(self.chassis_display_base.get_width() + 200, self.chassis_display_base.get_height() + 200)
 
         self.rect = self.chassis_display_base.get_rect()
@@ -129,7 +134,7 @@ class Tank:
             screen.blit(self.final_display, self.rect)
 
 
-    def update(self, screen):
+    def update(self, screen,):
         self.hitbox.x = self.rect.x
         self.hitbox.y = self.rect.y
 

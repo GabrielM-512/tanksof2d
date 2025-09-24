@@ -6,12 +6,19 @@ from src.system.ConnectionManager import ConnectionManager
 from src.objects.Tank import Tank
 
 class GameManager:
-    def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None):
+    def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         self.tank = tankobject
+        self.othertank = other_tank
+
+        self.objdict = {
+        }
 
         self.screen = None
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
-
+        try:
+            self.connection.connect()
+        except Exception as error:
+            print(f"Connection to server failed, launching in Singleplayer: {error}")
 
     def create_window(self, width, height, description):
         pygame.init()
@@ -31,12 +38,12 @@ class GameManager:
                     self.tank.shoot(pygame.mouse.get_pos())
 
 
-
     def update(self):
         if self.screen is None:
             raise Exception("Screen was not defined")
         self.handle_input()
         self.tank.update(self.screen)
+        self.othertank.update(self.screen)
 
 
     def handle_input(self):
@@ -72,7 +79,25 @@ class GameManager:
         self.tank.turret_angle = angle
 
     def handle_connection(self, msg : dict):
-        pass
+        try:
+            actions = msg["action"]
+
+            for action in actions:
+                match action:
+                    case "move":
+                        self.othertank.rect.x = msg["x"]
+                        self.othertank.rect.y = msg["y"]
+                    case "turn":
+                        self.othertank.chassis_angle = msg["angle"]
+                    case "turn_turret":
+                        self.othertank.turret_angle = msg["turret_angle"]
+                    case "shoot":
+                        self.othertank.shoot()
+                    case "hit":
+                        obj = self.objdict[msg["hitobj"]]
+                        self.objdict.pop(obj)
+        except:
+            pass
 
     def kill(self):
         self.connection.close()

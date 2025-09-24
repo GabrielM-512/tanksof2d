@@ -2,7 +2,22 @@ import socket
 import threading
 import json
 
-HOST = "10.21.165.3"
+modes = {
+    0 : "PVP",
+    1 : "PVE"
+}
+
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+try:
+    mode = modes[min(max(int(input("Select gamemode: ")), 0), 1)]
+    print(f"Selected Mode: {mode}")
+except:
+    print("Invalid mode, set to PVE")
+    mode = "PVE"
+
+HOST = IPAddr
 PORT = 5000
 
 clients = []  # track connected clients

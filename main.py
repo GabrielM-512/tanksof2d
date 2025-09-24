@@ -3,14 +3,22 @@ from src.system.GameManager import GameManager
 from src.objects.Tank import Tank
 from src.system.ConnectionManager import ConnectionManager
 
+import socket
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+
 pygame.init()
 
 clock = pygame.time.Clock()
 
-gameManager = GameManager(ip="10.21.165.3", port=5000)
+gameManager = GameManager(ip=IPAddr, port=5000)
 
 tank = Tank()
 gameManager.tank = tank
+
+othertank = Tank(col="Red")
+gameManager.othertank = othertank
 
 gameManager.create_window(1280, 720, "Tank 2d")
 

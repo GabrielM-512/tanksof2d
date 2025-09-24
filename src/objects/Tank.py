@@ -39,15 +39,27 @@ class Tank:
 
     BULLET_SPAWN_OFFSET = 20
 
-    def __init__(self, col : str = "Blue", callback = None, do_create : bool = False):
+    def __init__(self, col : str = "blue", chassis_model : str = "02", turret_model : str = "01", callback = None, do_create : bool = False):
 
         match col:
-            case "Blue":
-                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_D/Hull_02.png")
-                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_01.png")
-            case "Red":
-                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_02.png")
-                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_A/Gun_01.png")
+            case "red":
+                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_" + chassis_model + ".png")
+                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_A/Gun_" + turret_model + ".png")
+            case "yellow":
+                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_B/Hull_" + chassis_model + ".png")
+                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_B/Gun_" + turret_model + ".png")
+            case "cyan":
+                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_C/Hull_" + chassis_model + ".png")
+                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_C/Gun_" + turret_model + ".png")
+            case "blue":
+                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_D/Hull_" + chassis_model + ".png")
+                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_D/Gun_" + turret_model + ".png")
+            case _:
+                self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_" + chassis_model + ".png")
+                self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_A/Gun_" + turret_model + ".png")
+
+
+
 
         self.final_display_base = transparent_surface(self.chassis_display_base.get_width() + 200, self.chassis_display_base.get_height() + 200)
 
@@ -78,8 +90,12 @@ class Tank:
     
         self.global_connect_point = (0,0)
 
-    def shoot(self, pos):
-        bullet = Bullet(self.bullets, self.nozzle_position, self.turret_angle)
+    def shoot(self, pos = None):
+        if pos is None:
+            bullet = Bullet(self.bullets, self.nozzle_position, self.turret_angle)
+        else:
+            bullet = Bullet(self.bullets, pos, self.turret_angle)
+
         self.bullets.append(bullet)
         
     def draw(self, screen):
@@ -127,7 +143,7 @@ class Tank:
             local_nozzle_pos = (local_nozzle_pos[0] + self.global_connect_point[0], local_nozzle_pos[1] + self.global_connect_point[1])
             self.nozzle_position = local_nozzle_pos
 
-            pygame.draw.rect(screen, (255, 0, 0,), (self.nozzle_position, (2, 2)))
+            #pygame.draw.rect(screen, (255, 0, 0,), (self.nozzle_position, (2, 2))) # used for debugging
 
             screen.blit(self.final_display, self.rect)
 

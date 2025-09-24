@@ -14,6 +14,8 @@ class GameManager:
         self.tank = tankobject
         self.othertank = other_tank
 
+        self.old_turret_angle = 0.0
+
         self.objdict = {
             self.tank : self.tank,
             self.othertank : self.othertank,
@@ -27,6 +29,7 @@ class GameManager:
             self.connection.connect()
         except Exception as error:
             print(f"Connection to server failed, launching in Singleplayer: {error}")
+            self.connection.offline = True
 
     def create_window(self, width, height, description):
         pygame.init()
@@ -41,9 +44,17 @@ class GameManager:
                 self.kill()
                 pygame.quit()
                 sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.tank.maxBullets > len(self.tank.bullets):
-                    self.tank.shoot(pygame.mouse.get_pos())
+                    self.tank.shoot()
+
+                if not "shoot" in self.senddict["actions"]:
+                    self.senddict["actions"].append("shoot")
+
+                self.senddict["shoot"] = {}
+                #self.senddict["shoot"]["angle"] = self.tank.turret_angle
+                self.senddict["shoot"]["pos"] = self.tank.nozzle_position
 
 
     def update(self, framecount):
@@ -54,7 +65,7 @@ class GameManager:
         self.othertank.update(self.screen)
 
 
-        if framecount % self.UPDATEDURATION == 0:
+        if framecount % self.UPDATEDURATION == 0 and len(self.senddict) > 1:
             self.connection.send(self.senddict)
             self.senddict.clear()
             self.senddict["actions"] = []
@@ -90,6 +101,7 @@ class GameManager:
 
 
         pos = pygame.mouse.get_pos()
+
         try:
             angle = math.degrees(math.atan((pos[0] - self.tank.global_connect_point[0]) / (pos[1] - self.tank.global_connect_point[1])))
             if pos[1] > self.tank.global_connect_point[1]:
@@ -103,10 +115,13 @@ class GameManager:
         
         self.tank.turret_angle = angle
 
-        if not "turn_turret" in self.senddict["actions"]:
-            self.senddict["actions"].append("turn_turret")
+        if self.old_turret_angle != self.tank.turret_angle:
+            if not "turn_turret" in self.senddict["actions"]:
+                self.senddict["actions"].append("turn_turret")
 
-        self.senddict["turret_angle"] = self.tank.turret_angle
+            self.old_turret_angle = self.tank.turret_angle
+
+            self.senddict["turret_angle"] = self.tank.turret_angle
 
     def handle_connection(self, msg : dict):
         try:
@@ -122,15 +137,23 @@ class GameManager:
                     case "turn_turret":
                         self.othertank.turret_angle = msg["turret_angle"]
                     case "shoot":
-                        self.othertank.shoot()
+                        old_angle = self.othertank.turret_angle
+                        self.othertank.turret_angle = msg["turret_angle"]
+
+                        self.othertank.shoot(msg["shoot"]["pos"])
+
+                        self.othertank.turret_angle = old_angle
                     case "hit":
                         obj = self.objdict[msg["hitinfo"]["hitobj"]]
                         bullet : Bullet = self.objdict[msg["hitinfo"]["bullet"]]
                         self.objdict.pop(obj)
                         bullet.destroy()
 
+                    case "disconnect":
+                        self.connection.offline = True
+
         except Exception as error:
-            print("error: ", error)
+            print("error in handle_connection(): ", error, msg)
 
 
     def kill(self):

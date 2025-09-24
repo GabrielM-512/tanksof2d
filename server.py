@@ -17,7 +17,7 @@ except:
     print("Invalid mode, set to PVE")
     mode = "PVE"
 
-HOST = IPAddr
+HOST = "0.0.0.0"
 PORT = 5000
 
 clients = []  # track connected clients

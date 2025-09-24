@@ -12,11 +12,6 @@ class GameManager:
         self.screen = None
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
 
-        try:
-            self.connection.connect()
-        except:
-            print("No connection achieved, launched in single-player testing mode")
-
 
     def create_window(self, width, height, description):
         pygame.init()

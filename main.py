@@ -7,12 +7,12 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
-gameManager = GameManager(ip="localhost", port=5000)
+gameManager = GameManager(ip="10.21.165.3", port=5000)
 
 tank = Tank()
 gameManager.tank = tank
 
-gameManager.create_window(1920, 1080, "Tank 2d")
+gameManager.create_window(1280, 720, "Tank 2d")
 
 while True:
 	gameManager.handle_events()

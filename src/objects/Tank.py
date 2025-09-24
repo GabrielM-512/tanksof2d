@@ -49,7 +49,7 @@ class Tank:
         self.rect = self.chassis_display_base.get_rect()
         self.turretRect = self.turret_base_icon.get_rect()
 
-        self.base_chassis_connect_point = (0, 22)
+        self.base_chassis_connect_point = (0, 35)
         self.base_turret_connect_point = (0, 54)
         self.nozzle_position = (0, 100)
 

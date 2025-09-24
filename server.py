@@ -2,7 +2,7 @@ import socket
 import threading
 import json
 
-HOST = "192.168.178.60"
+HOST = "10.21.165.3"
 PORT = 5000
 
 clients = []  # track connected clients

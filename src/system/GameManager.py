@@ -53,7 +53,7 @@ class GameManager:
                     self.senddict["actions"].append("shoot")
 
                 self.senddict["shoot"] = {}
-                #self.senddict["shoot"]["angle"] = self.tank.turret_angle
+                self.senddict["shoot"]["angle"] = self.tank.turret_angle
                 self.senddict["shoot"]["pos"] = self.tank.nozzle_position
 
 
@@ -138,7 +138,7 @@ class GameManager:
                         self.othertank.turret_angle = msg["turret_angle"]
                     case "shoot":
                         old_angle = self.othertank.turret_angle
-                        self.othertank.turret_angle = msg["turret_angle"]
+                        self.othertank.turret_angle = msg["shoot"]["angle"]
 
                         self.othertank.shoot(msg["shoot"]["pos"])
 

@@ -4,6 +4,7 @@ from src.objects.Tank import Tank
 from src.system.ConnectionManager import ConnectionManager
 
 import socket
+
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 

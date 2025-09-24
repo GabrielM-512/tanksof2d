@@ -41,12 +41,13 @@ class ConnectionManager:
         """Callback for handling received messages (raw JSON string)."""
         try:
             data = json.loads(msg)
-            print("Received JSON:", data)
+            #print("Received JSON:", data)
 
             if self.callback is None:
                 raise Exception("No callback function attached")
             else:
                 self.callback(data)
+                print("\ncallback: ", data, "\n")
         except json.JSONDecodeError:
             print("Invalid JSON:", msg)
 

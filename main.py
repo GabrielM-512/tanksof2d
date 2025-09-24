@@ -22,16 +22,22 @@ gameManager.othertank = othertank
 
 gameManager.create_window(1280, 720, "Tank 2d")
 
+gameManager.senddict.clear()
+gameManager.senddict["actions"] = []
+
+framecount = 0
+
 while True:
 	gameManager.handle_events()
-
 	mouse_pos = pygame.mouse.get_pos()
 	
 	gameManager.screen.fill((30,30,30))
-	gameManager.update()
+	gameManager.update(framecount)
 
 	pygame.display.update()
 	
 	dT = clock.tick(120)
 	fps = clock.get_fps()
+
+	framecount += 1
 	

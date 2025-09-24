@@ -4,14 +4,22 @@ import math
 
 from src.system.ConnectionManager import ConnectionManager
 from src.objects.Tank import Tank
+from src.objects.Bullet import Bullet
 
 class GameManager:
+
+    UPDATEDURATION = 10
+
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         self.tank = tankobject
         self.othertank = other_tank
 
         self.objdict = {
+            self.tank : self.tank,
+            self.othertank : self.othertank,
         }
+
+        self.senddict = {}
 
         self.screen = None
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
@@ -38,12 +46,18 @@ class GameManager:
                     self.tank.shoot(pygame.mouse.get_pos())
 
 
-    def update(self):
+    def update(self, framecount):
         if self.screen is None:
             raise Exception("Screen was not defined")
         self.handle_input()
         self.tank.update(self.screen)
         self.othertank.update(self.screen)
+
+
+        if framecount % self.UPDATEDURATION == 0:
+            self.connection.send(self.senddict)
+            self.senddict.clear()
+            self.senddict["actions"] = []
 
 
     def handle_input(self):
@@ -63,6 +77,17 @@ class GameManager:
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
 
+        if keys[pygame.K_w] or keys[pygame.K_s] or keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or keys[pygame.K_UP] or keys[pygame.K_DOWN]:
+            if not "move" in self.senddict["actions"]:
+                self.senddict["actions"].append("move")
+            self.senddict["x"] = self.tank.rect.x
+            self.senddict["y"] = self.tank.rect.y
+
+            if not "turn" in self.senddict["actions"]:
+                self.senddict["actions"].append("turn")
+            self.senddict["angle"] = self.tank.chassis_angle
+
+
 
         pos = pygame.mouse.get_pos()
         try:
@@ -78,9 +103,14 @@ class GameManager:
         
         self.tank.turret_angle = angle
 
+        if not "turn_turret" in self.senddict["actions"]:
+            self.senddict["actions"].append("turn_turret")
+
+        self.senddict["turret_angle"] = self.tank.turret_angle
+
     def handle_connection(self, msg : dict):
         try:
-            actions = msg["action"]
+            actions = msg["actions"]
 
             for action in actions:
                 match action:
@@ -94,10 +124,14 @@ class GameManager:
                     case "shoot":
                         self.othertank.shoot()
                     case "hit":
-                        obj = self.objdict[msg["hitobj"]]
+                        obj = self.objdict[msg["hitinfo"]["hitobj"]]
+                        bullet : Bullet = self.objdict[msg["hitinfo"]["bullet"]]
                         self.objdict.pop(obj)
-        except:
-            pass
+                        bullet.destroy()
+
+        except Exception as error:
+        #    print("error: ", error)
+            raise Exception(error)
 
     def kill(self):
         self.connection.close()

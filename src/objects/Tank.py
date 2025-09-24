@@ -39,7 +39,7 @@ class Tank:
 
     BULLET_SPAWN_OFFSET = 20
 
-    def __init__(self, col : str = "Blue"):
+    def __init__(self, col : str = "Blue", callback = None, do_create : bool = False):
 
         match col:
             case "Blue":
@@ -78,13 +78,11 @@ class Tank:
     
         self.global_connect_point = (0,0)
 
-    def shoot(self,pos):
+    def shoot(self, pos):
         bullet = Bullet(self.bullets, self.nozzle_position, self.turret_angle)
         self.bullets.append(bullet)
         
     def draw(self, screen):
-            
-
 
             self.final_display = self.final_display_base.__copy__()
 

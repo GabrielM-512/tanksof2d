@@ -8,7 +8,7 @@ from src.objects.Bullet import Bullet
 
 class GameManager:
 
-    UPDATEDURATION = 10
+    UPDATEDURATION = 1
 
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         self.tank = tankobject
@@ -118,7 +118,7 @@ class GameManager:
                         self.othertank.rect.x = msg["x"]
                         self.othertank.rect.y = msg["y"]
                     case "turn":
-                        self.othertank.chassis_angle = msg["angle"]
+                        self.othertank.chassis_angle = msg["angle"] # seems to lag a little
                     case "turn_turret":
                         self.othertank.turret_angle = msg["turret_angle"]
                     case "shoot":
@@ -130,8 +130,8 @@ class GameManager:
                         bullet.destroy()
 
         except Exception as error:
-        #    print("error: ", error)
-            raise Exception(error)
+            print("error: ", error)
+
 
     def kill(self):
         self.connection.close()

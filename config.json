@@ -3,7 +3,7 @@
     "IP": "localhost",
     "PORT": 5000
   },
-  "playercolor": "cyan",
-  "othercolor": "yellow"
+  "playercolor": "blue",
+  "othercolor": "red"
 
 }

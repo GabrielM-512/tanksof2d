@@ -1,6 +1,7 @@
 import socket
 import threading
 import json
+import warnings
 
 class ConnectionManager:
     def __init__(self, host="127.0.0.1", port=5000, callback = None):
@@ -10,6 +11,7 @@ class ConnectionManager:
         self.running = False
         self.buffer = ""  # for accumulating partial data
         self.callback = callback
+        self.offline = False
 
     def connect(self):
         """Connects to the server and starts listening for messages."""
@@ -53,8 +55,9 @@ class ConnectionManager:
 
     def send(self, obj):
         """Send a JSON-serializable object to the server."""
-        if not self.running:
-            raise RuntimeError("Client is not connected.")
+        if self.offline:
+            warnings.warn("You're offline.", UserWarning)
+            return
         try:
             msg = json.dumps(obj) + "\n"  # NDJSON format
             self.sock.sendall(msg.encode())

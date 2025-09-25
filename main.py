@@ -16,8 +16,7 @@ def main():
 	tank = Tank(config["playercolor"], is_local=True)
 	othertank = Tank(col=config["othercolor"])
 
-	gameManager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tankobject=tank, other_tank=othertank)
-
+	gameManager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tankobject=tank, other_tank=othertank ,playerId=0)
 	gameManager.create_window(config["resolution"]["width"], config["resolution"]["height"], "Tank 2d")
 
 	gameManager.senddict.clear()

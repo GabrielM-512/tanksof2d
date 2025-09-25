@@ -13,6 +13,10 @@ class GameManager:
     UPDATEDURATION = 1
 
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
+        
+        self.playerId = None
+        self.mode : str = None
+
         self.tank = tankobject
         self.tank.callback = self.hit_handler
         self.othertank = other_tank
@@ -152,8 +156,14 @@ class GameManager:
                         bullet : Bullet = self.objdict[msg["hitinfo"]["bullet"]]
                         self.objdict.pop(obj)
                         bullet.destroy()
+                    case "connect":
+                        self.playerId = msg["id"]
+                        self.playMode = msg["mode"]
                     case "disconnect":
                         self.connection.offline = True
+
+                    case _:
+                        warnings.warn(f"Unknown action received from server: {action}", RuntimeWarning)
 
         except Exception as error:
             print("error in handle_connection(): ", error, msg)

@@ -24,6 +24,16 @@ clients = []  # track connected clients
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr}")
+    
+    data = {
+        "actions": ["connect"],
+        "id": len(clients) - 1,
+        "mode": mode
+    }
+    data = json.dumps(data) + "\n"
+    conn.sendall(data.encode())
+
+
     buffer = ""  # accumulate partial data per client
     while True:
         try:

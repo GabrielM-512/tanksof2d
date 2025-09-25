@@ -150,13 +150,17 @@ class GameManager:
 
             for action in actions:
                 match action:
+
                     case "move":
                         self.othertank.rect.x = msg["x"]
                         self.othertank.rect.y = msg["y"]
+
                     case "turn":
                         self.othertank.chassis_angle = msg["angle"] # seems to lag a little
+
                     case "turn_turret":
                         self.othertank.turret_angle = msg["turret_angle"]
+
                     case "shoot":
                         old_angle = self.othertank.turret_angle
                         self.othertank.turret_angle = msg["shoot"]["angle"]
@@ -167,7 +171,6 @@ class GameManager:
                         self.othertank.turret_angle = old_angle
 
                     case "hit":
-                        print("received hit: ", msg)
                         obj = self.objdict[msg["hitinfo"]["hitObjectKey"]]
                         bullet : Bullet = self.objdict[msg["hitinfo"]["bulletKey"]]
 
@@ -177,7 +180,6 @@ class GameManager:
                     case "connect":
                         self.playerId = msg["id"]
                         self.playMode = msg["mode"]
-                        #print("connect: ", msg)
 
                         if self.tank is not None:
                             self.objdict[f"tank:{self.playerId}"] = self.tank
@@ -191,6 +193,7 @@ class GameManager:
                             else:
                                 raise Exception(f"couldn't assign othertank to id; self.playerID = {self.playerId}")
                         else: raise Exception("othertank was none on server connect")
+
                     case "disconnect":
                         self.connection.offline = True
 
@@ -198,13 +201,10 @@ class GameManager:
                         warnings.warn(f"Unknown action received from server: {action}", RuntimeWarning)
 
         except Exception as error:
-            #print("error in handle_connection(): ", error, msg)
+            print("error in handle_connection(): ", error, msg)
             print(self.objdict)
-            raise error
 
     def hit_handler(self, obj, bullet : Bullet):
-
-        #print("hit: ", self, obj, bullet)
 
         if not self.connection.offline:
             if "hit" not in self.senddict["actions"]:

@@ -44,25 +44,23 @@ class GameManager:
         pygame.display.set_caption(description)
         self.screen = screen
 
-
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 self.kill()
                 pygame.quit()
                 sys.exit()
-
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if self.tank.maxBullets > len(self.tank.bullets):
-                    self.tank.shoot()
+                if event.button == 1:
+                    if self.tank.maxBullets > len(self.tank.bullets):
+                        self.tank.shoot()
 
-                if not "shoot" in self.senddict["actions"]:
-                    self.senddict["actions"].append("shoot")
+                    if not "shoot" in self.senddict["actions"]:
+                        self.senddict["actions"].append("shoot")
 
-                self.senddict["shoot"] = {}
-                self.senddict["shoot"]["angle"] = self.tank.turret_angle
-                self.senddict["shoot"]["pos"] = self.tank.nozzle_position
-
+                    self.senddict["shoot"] = {}
+                    self.senddict["shoot"]["angle"] = self.tank.turret_angle
+                    self.senddict["shoot"]["pos"] = self.tank.nozzle_position
 
     def update(self, framecount):
         if self.screen is None:
@@ -78,7 +76,6 @@ class GameManager:
             self.connection.send(self.senddict)
             self.senddict.clear()
             self.senddict["actions"] = []
-
 
     def handle_input(self):
         if self.tank is None:
@@ -106,8 +103,6 @@ class GameManager:
             if not "turn" in self.senddict["actions"]:
                 self.senddict["actions"].append("turn")
             self.senddict["angle"] = self.tank.chassis_angle
-
-
 
         pos = pygame.mouse.get_pos()
 
@@ -157,7 +152,6 @@ class GameManager:
                         bullet : Bullet = self.objdict[msg["hitinfo"]["bullet"]]
                         self.objdict.pop(obj)
                         bullet.destroy()
-
                     case "disconnect":
                         self.connection.offline = True
 
@@ -172,14 +166,12 @@ class GameManager:
             if "hitinfo" not in self.senddict:
                 self.senddict["hitinfo"] = []
 
-            # get the keys for the object and bullet
             bulletkey = [key for key, val in self.objdict.items() if val == bullet]
             objkey = [key for key, val in self.objdict.items() if val == obj]
             if len(bulletkey) > 0 and len(objkey) > 0:
                 self.senddict["hitinfo"].append({"hitobject": objkey[0], "bullet": bulletkey[0]})
             else:
                 warnings.warn(f"No key found for object: {obj} or bullet: {bullet}", RuntimeWarning)
-
         try:
             obj.hit(bullet)
         except:
@@ -187,7 +179,5 @@ class GameManager:
 
         bullet.destroy()
         
-
-
     def kill(self):
         self.connection.close()

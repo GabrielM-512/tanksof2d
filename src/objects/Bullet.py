@@ -18,7 +18,7 @@ class Bullet:
         self.speed = 15
         self.angle = ang
 
-        self.length = 5000
+        self.length = 1000
 
         self.vx = self.speed * math.sin(math.radians(self.angle))
         self.vy = self.speed * math.cos(math.radians(self.angle))

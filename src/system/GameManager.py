@@ -35,6 +35,9 @@ class GameManager:
 
         self.screen = None
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
+
+        self.playMode = None
+
         try:
             self.connection.connect()
         except Exception as error:
@@ -175,14 +178,14 @@ class GameManager:
                         #print("connect: ", msg)
 
                         if self.tank is not None:
-                            self.objdict[f"tank{self.playerId}"] = self.tank
+                            self.objdict[f"tank:{self.playerId}"] = self.tank
                         else: raise Exception("tank was none on server connect")
 
                         if self.othertank is not None:
                             if self.playerId == 0:
-                                self.objdict["tank1"] = self.othertank
+                                self.objdict["tank:1"] = self.othertank
                             elif self.playerId == 1:
-                                self.objdict["tank0"] = self.othertank
+                                self.objdict["tank:0"] = self.othertank
                             else:
                                 raise Exception(f"couldn't assign othertank to id; self.playerID = {self.playerId}")
                         else: raise Exception("othertank was none on server connect")

@@ -152,6 +152,7 @@ class GameManager:
 
                         self.othertank.turret_angle = old_angle
                     case "hit":
+                        # TODO: work
                         obj = self.objdict[msg["hitinfo"]["hitobj"]]
                         bullet : Bullet = self.objdict[msg["hitinfo"]["bullet"]]
                         self.objdict.pop(obj)
@@ -159,6 +160,7 @@ class GameManager:
                     case "connect":
                         self.playerId = msg["id"]
                         self.playMode = msg["mode"]
+                        print("connect: ", msg)
                     case "disconnect":
                         self.connection.offline = True
 
@@ -169,7 +171,9 @@ class GameManager:
             print("error in handle_connection(): ", error, msg)
 
     def hit_handler(self, obj, bullet : Bullet):
+
         print("hit: ", self, obj, bullet)
+
         if not self.connection.offline:
             if "hit" not in self.senddict["actions"]:
                 self.senddict["actions"].append("hit")
@@ -178,6 +182,7 @@ class GameManager:
 
             bulletkey = [key for key, val in self.objdict.items() if val == bullet]
             objkey = [key for key, val in self.objdict.items() if val == obj]
+
             if len(bulletkey) > 0 and len(objkey) > 0:
                 self.senddict["hitinfo"].append({"hitobject": objkey[0], "bullet": bulletkey[0]})
             else:

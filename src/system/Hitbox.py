@@ -8,5 +8,5 @@ class Hitbox:
     def update(self, source):
         self.hitbox = pygame.mask.from_surface(source, threshold=50)
 
-    def collides(self, pastHitbox):
+    def collides(self, pastHitbox) -> bool:
         return self.hitbox.overlap_area(pastHitbox.hitbox, (pastHitbox.x - self.x, pastHitbox.y - self.y)) > 0

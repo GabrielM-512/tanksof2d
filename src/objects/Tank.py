@@ -39,7 +39,7 @@ class Tank:
 
     BULLET_SPAWN_OFFSET = 20
 
-    def __init__(self, col : str = "blue", chassis_model : str = "02", turret_model : str = "01", callback = None, do_create : bool = False):
+    def __init__(self, col : str = "blue", chassis_model : str = "02", turret_model : str = "01", callback = None, is_local : bool = False):
 
         match col:
             case "red":
@@ -92,9 +92,9 @@ class Tank:
 
     def shoot(self, pos = None):
         if pos is None:
-            bullet = Bullet(self.bullets, self.nozzle_position, self.turret_angle)
+            bullet = Bullet(self, self.nozzle_position, self.turret_angle)
         else:
-            bullet = Bullet(self.bullets, pos, self.turret_angle)
+            bullet = Bullet(self, pos, self.turret_angle)
 
         self.bullets.append(bullet)
         
@@ -148,7 +148,7 @@ class Tank:
             screen.blit(self.final_display, self.rect)
 
 
-    def update(self, screen,):
+    def update(self, screen):
         self.hitbox.x = self.rect.x
         self.hitbox.y = self.rect.y
 
@@ -168,3 +168,9 @@ class Tank:
         if len(self.bullets) > 0:
             for bullet in self.bullets:
                 bullet.update(screen)
+
+    def collisions(self, objdict):
+        if self.hitbox.collides(objdict["othertank"].hitbox):
+            pass
+        for bullet in self.bullets:
+            bullet.collision(objdict)

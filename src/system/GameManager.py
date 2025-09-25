@@ -2,6 +2,8 @@ import pygame
 import sys
 import math
 
+import warnings
+
 from src.system.ConnectionManager import ConnectionManager
 from src.objects.Tank import Tank
 from src.objects.Bullet import Bullet
@@ -12,14 +14,19 @@ class GameManager:
 
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         self.tank = tankobject
+        self.tank.callback = self.hit_handler
         self.othertank = other_tank
 
         self.old_turret_angle = 0.0
 
         self.objdict = {
-            self.tank : self.tank,
-            self.othertank : self.othertank,
+            
         }
+
+        if tankobject is not None:
+            self.objdict["selftank"] = tankobject
+        if other_tank is not None:
+            self.objdict["othertank"] = other_tank
 
         self.senddict = {}
 
@@ -63,6 +70,8 @@ class GameManager:
         self.handle_input()
         self.tank.update(self.screen)
         self.othertank.update(self.screen)
+
+        self.tank.collisions(self.objdict)
 
 
         if framecount % self.UPDATEDURATION == 0 and len(self.senddict) > 1:
@@ -154,6 +163,30 @@ class GameManager:
 
         except Exception as error:
             print("error in handle_connection(): ", error, msg)
+
+    def hit_handler(self, obj, bullet : Bullet):
+        print("hit: ", self, obj, bullet)
+        if not self.connection.offline:
+            if "hit" not in self.senddict["actions"]:
+                self.senddict["actions"].append("hit")
+            if "hitinfo" not in self.senddict:
+                self.senddict["hitinfo"] = []
+
+            # get the keys for the object and bullet
+            bulletkey = [key for key, val in self.objdict.items() if val == bullet]
+            objkey = [key for key, val in self.objdict.items() if val == obj]
+            if len(bulletkey) > 0 and len(objkey) > 0:
+                self.senddict["hitinfo"].append({"hitobject": objkey[0], "bullet": bulletkey[0]})
+            else:
+                warnings.warn(f"No key found for object: {obj} or bullet: {bullet}", RuntimeWarning)
+
+        try:
+            obj.hit(bullet)
+        except:
+            warnings.warn("error in hit_handler", RuntimeWarning)
+
+        bullet.destroy()
+        
 
 
     def kill(self):

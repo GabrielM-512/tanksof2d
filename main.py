@@ -13,13 +13,10 @@ def main():
 
 	clock = pygame.time.Clock()
 
-	gameManager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"])
-
-	tank = Tank(config["playercolor"])
-	gameManager.tank = tank
-
+	tank = Tank(config["playercolor"], is_local=True)
 	othertank = Tank(col=config["othercolor"])
-	gameManager.othertank = othertank
+
+	gameManager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tankobject=tank, other_tank=othertank)
 
 	gameManager.create_window(config["resolution"]["width"], config["resolution"]["height"], "Tank 2d")
 

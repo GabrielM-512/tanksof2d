@@ -18,7 +18,7 @@ class Bullet:
         self.speed = 15
         self.angle = ang
 
-        self.length = 500
+        self.length = 5000
 
         self.vx = self.speed * math.sin(math.radians(self.angle))
         self.vy = self.speed * math.cos(math.radians(self.angle))
@@ -57,9 +57,13 @@ class Bullet:
 
         pygame.draw.polygon(screen, (200, 150, 150), after_list, 0)"""
 
-
+    def collision(self, objdict):
+        for obj in objdict.values():
+            if obj is not self and obj is not self.parent and hasattr(obj, "hitbox"):
+                if self.hitbox.collides(obj.hitbox):
+                    self.parent.callback(obj, self)
 
     def destroy(self):
-        if self in self.parent:
-            self.parent.remove(self)
+        if self in self.parent.bullets:
+            self.parent.bullets.remove(self)
         self.parent = None

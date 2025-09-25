@@ -10,27 +10,26 @@ from src.objects.Bullet import Bullet
 
 class GameManager:
 
-    UPDATEDURATION = 1
+    UPDATEFREQUENCY = 1
 
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         
         self.playerId = None
         self.mode : str = None
 
+        self.shotbullets = 0
+
         self.tank = tankobject
         self.tank.callback = self.hit_handler
+
         self.othertank = other_tank
+        self.othertankID = None
 
         self.old_turret_angle = 0.0
 
         self.objdict = {
             
         }
-
-        if tankobject is not None:
-            self.objdict["selftank"] = tankobject
-        if other_tank is not None:
-            self.objdict["othertank"] = other_tank
 
         self.senddict = {}
 
@@ -48,35 +47,46 @@ class GameManager:
         pygame.display.set_caption(description)
         self.screen = screen
 
+    def set_tank_object(self, tank, tank_id):
+        self.objdict[f"tank{tank_id}"] = tank
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 self.kill()
                 pygame.quit()
                 sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.tank.maxBullets > len(self.tank.bullets):
-                        self.tank.shoot()
+                        bullet = self.tank.shoot(self.objdict)
 
-                    if not "shoot" in self.senddict["actions"]:
-                        self.senddict["actions"].append("shoot")
+                        self.objdict[f"{self.playerId}:Bullet{self.shotbullets}"] = bullet
 
-                    self.senddict["shoot"] = {}
-                    self.senddict["shoot"]["angle"] = self.tank.turret_angle
-                    self.senddict["shoot"]["pos"] = self.tank.nozzle_position
+                        if not "shoot" in self.senddict["actions"]:
+                            self.senddict["actions"].append("shoot")
+
+                        self.senddict["shoot"] = {}
+                        self.senddict["shoot"]["angle"] = self.tank.turret_angle
+                        self.senddict["shoot"]["pos"] = self.tank.nozzle_position
+                        self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet{self.shotbullets}"
+
+                        self.shotbullets += 1
 
     def update(self, framecount):
+        assert isinstance(self.objdict, dict)
+
         if self.screen is None:
             raise Exception("Screen was not defined")
         self.handle_input()
         self.tank.update(self.screen)
         self.othertank.update(self.screen)
 
-        self.tank.collisions(self.objdict)
+        self.tank.collisions(self.objdict, self.othertankID)
 
 
-        if framecount % self.UPDATEDURATION == 0 and len(self.senddict) > 1:
+        if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict) > 1:
             self.connection.send(self.senddict)
             self.senddict.clear()
             self.senddict["actions"] = []
@@ -148,19 +158,34 @@ class GameManager:
                         old_angle = self.othertank.turret_angle
                         self.othertank.turret_angle = msg["shoot"]["angle"]
 
-                        self.othertank.shoot(msg["shoot"]["pos"])
+                        bullet = self.othertank.shoot(self.objdict, pos=msg["shoot"]["pos"])
+                        self.objdict[msg["shoot"]["id"]] = bullet
 
                         self.othertank.turret_angle = old_angle
                     case "hit":
                         # TODO: work
-                        obj = self.objdict[msg["hitinfo"]["hitobj"]]
-                        bullet : Bullet = self.objdict[msg["hitinfo"]["bullet"]]
-                        self.objdict.pop(obj)
+                        obj = self.objdict[msg["hitinfo"]["hitObjectKey"]]
+                        bullet : Bullet = self.objdict[msg["hitinfo"]["bulletKey"]]
+                        #objkey =
+                        obj.hit(bullet)
                         bullet.destroy()
                     case "connect":
                         self.playerId = msg["id"]
                         self.playMode = msg["mode"]
-                        print("connect: ", msg)
+                        #print("connect: ", msg)
+
+                        if self.tank is not None:
+                            self.objdict[f"tank{self.playerId}"] = self.tank
+                        else: raise Exception("tank was none on server connect")
+
+                        if self.othertank is not None:
+                            if self.playerId == 0:
+                                self.objdict["tank1"] = self.othertank
+                            elif self.playerId == 1:
+                                self.objdict["tank0"] = self.othertank
+                            else:
+                                raise Exception(f"couldn't assign othertank to id; self.playerID = {self.playerId}")
+                        else: raise Exception("othertank was none on server connect")
                     case "disconnect":
                         self.connection.offline = True
 
@@ -169,28 +194,31 @@ class GameManager:
 
         except Exception as error:
             print("error in handle_connection(): ", error, msg)
+            print(self.objdict)
 
     def hit_handler(self, obj, bullet : Bullet):
 
-        print("hit: ", self, obj, bullet)
+        #print("hit: ", self, obj, bullet)
 
         if not self.connection.offline:
             if "hit" not in self.senddict["actions"]:
                 self.senddict["actions"].append("hit")
             if "hitinfo" not in self.senddict:
-                self.senddict["hitinfo"] = []
+                self.senddict["hitinfo"] = {}
 
             bulletkey = [key for key, val in self.objdict.items() if val == bullet]
             objkey = [key for key, val in self.objdict.items() if val == obj]
 
             if len(bulletkey) > 0 and len(objkey) > 0:
-                self.senddict["hitinfo"].append({"hitobject": objkey[0], "bullet": bulletkey[0]})
+                #self.senddict["hitinfo"].append({"hitobject": objkey[0], "bullet": bulletkey[0]})
+                self.senddict["hitinfo"]["hitObjectKey"] = objkey[0]
+                self.senddict["hitinfo"]["bulletKey"] = bulletkey[0]
             else:
                 warnings.warn(f"No key found for object: {obj} or bullet: {bullet}", RuntimeWarning)
         try:
             obj.hit(bullet)
         except:
-            warnings.warn("error in hit_handler", RuntimeWarning)
+            warnings.warn(f"error in hit_handler: obj = {obj}; bullet = {bullet}", RuntimeWarning)
 
         bullet.destroy()
         

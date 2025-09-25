@@ -1,9 +1,11 @@
 import pygame
 import math
+import warnings
+
 from src.system.Hitbox import Hitbox
 
 class Bullet:
-    def __init__(self, parent, nPos, ang):
+    def __init__(self, parent, nPos, ang, objdict : dict):
         self.parent = parent
 
         self.icon_base = pygame.image.load("assets/PNG/Effects/Medium_Shell.png")
@@ -22,6 +24,8 @@ class Bullet:
 
         self.vx = self.speed * math.sin(math.radians(self.angle))
         self.vy = self.speed * math.cos(math.radians(self.angle))
+
+        self.objdict = objdict
 
     def update(self, screen : pygame.surface.Surface):
         self.rect.x -= self.vx
@@ -62,8 +66,22 @@ class Bullet:
             if obj is not self and obj is not self.parent and hasattr(obj, "hitbox"):
                 if self.hitbox.collides(obj.hitbox):
                     self.parent.callback(obj, self)
+                    break
 
     def destroy(self):
         if self in self.parent.bullets:
             self.parent.bullets.remove(self)
         self.parent = None
+        try:
+            bulletkey = [key for key, val in self.objdict.items() if val == self][0]
+            self.objdict.pop(bulletkey)
+            self.objdict = None
+        except IndexError as e:
+            warnings.warn(f"Error in removing {self} from objdict: {e}", RuntimeWarning)
+
+    def hit(self, hitBy):
+        if hitBy is self:
+            return
+        self.destroy()
+
+

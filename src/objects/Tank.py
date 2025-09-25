@@ -83,20 +83,21 @@ class Tank:
         self.hitbox = Hitbox(self.chassis_display, 10, 10)
         self.bullets = []
         self.health = 100
-        self.maxBullets = 1000
+        self.maxBullets = 5
 
         self.offsetx = self.hitbox.x
         self.offsety = self.hitbox.y
     
         self.global_connect_point = (0,0)
 
-    def shoot(self, pos = None):
+    def shoot(self, objdict, pos = None):
         if pos is None:
-            bullet = Bullet(self, self.nozzle_position, self.turret_angle)
+            bullet = Bullet(self, self.nozzle_position, self.turret_angle, objdict)
         else:
-            bullet = Bullet(self, pos, self.turret_angle)
+            bullet = Bullet(self, pos, self.turret_angle, objdict)
 
         self.bullets.append(bullet)
+        return bullet
         
     def draw(self, screen):
 
@@ -169,8 +170,12 @@ class Tank:
             for bullet in self.bullets:
                 bullet.update(screen)
 
-    def collisions(self, objdict):
-        if self.hitbox.collides(objdict["othertank"].hitbox):
-            pass
+    def collisions(self, objdict, othertankID):
+        if othertankID is not None and self.hitbox.collides(objdict[othertankID].hitbox):
+            pass # do logic for hitting the other tank
         for bullet in self.bullets:
             bullet.collision(objdict)
+
+    def hit(self, hitby):
+        pass
+        #print("oh no, I, ", self, " was hit by ", hitby)

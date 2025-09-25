@@ -65,7 +65,7 @@ class GameManager:
                     if self.tank.maxBullets > len(self.tank.bullets):
                         bullet = self.tank.shoot(self.objdict)
 
-                        self.objdict[f"{self.playerId}:Bullet{self.shotbullets}"] = bullet
+                        self.objdict[f"{self.playerId}:Bullet:{self.shotbullets}"] = bullet
 
                         if not "shoot" in self.senddict["actions"]:
                             self.senddict["actions"].append("shoot")
@@ -73,7 +73,7 @@ class GameManager:
                         self.senddict["shoot"] = {}
                         self.senddict["shoot"]["angle"] = self.tank.turret_angle
                         self.senddict["shoot"]["pos"] = self.tank.nozzle_position
-                        self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet{self.shotbullets}"
+                        self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet:{self.shotbullets}"
 
                         self.shotbullets += 1
 
@@ -165,13 +165,15 @@ class GameManager:
                         self.objdict[msg["shoot"]["id"]] = bullet
 
                         self.othertank.turret_angle = old_angle
+
                     case "hit":
-                        # TODO: work
+                        print("received hit: ", msg)
                         obj = self.objdict[msg["hitinfo"]["hitObjectKey"]]
                         bullet : Bullet = self.objdict[msg["hitinfo"]["bulletKey"]]
-                        #objkey =
+
                         obj.hit(bullet)
                         bullet.destroy()
+
                     case "connect":
                         self.playerId = msg["id"]
                         self.playMode = msg["mode"]
@@ -196,8 +198,9 @@ class GameManager:
                         warnings.warn(f"Unknown action received from server: {action}", RuntimeWarning)
 
         except Exception as error:
-            print("error in handle_connection(): ", error, msg)
+            #print("error in handle_connection(): ", error, msg)
             print(self.objdict)
+            raise error
 
     def hit_handler(self, obj, bullet : Bullet):
 

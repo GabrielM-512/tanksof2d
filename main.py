@@ -21,7 +21,7 @@ def main():
 	othertank = Tank(col=config["othercolor"])
 	gameManager.othertank = othertank
 
-	gameManager.create_window(1280, 720, "Tank 2d")
+	gameManager.create_window(config["resolution"]["width"], config["resolution"]["height"], "Tank 2d")
 
 	gameManager.senddict.clear()
 	gameManager.senddict["actions"] = []

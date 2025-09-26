@@ -1,6 +1,8 @@
 import socket
 import threading
 import json
+import sys
+import warnings
 
 modes = {
     0 : "PVP",
@@ -85,11 +87,20 @@ def start_server():
     server.listen()
     print(f"[SERVER LISTENING] {HOST}:{PORT}")
 
+    server.settimeout(1.0)
+
     while True:
-        conn, addr = server.accept()
-        clients.append(conn)
-        thread = threading.Thread(target=handle_client, args=(conn, addr), daemon=True)
-        thread.start()
+        try:
+            conn, addr = server.accept()
+            clients.append(conn)
+            thread = threading.Thread(target=handle_client, args=(conn, addr), daemon=True)
+            thread.start()
+        except socket.timeout:
+            continue
 
 if __name__ == "__main__":
-    start_server()
+    try:
+        start_server()
+    except KeyboardInterrupt:
+        warnings.warn("exited from keyboard interrupt", UserWarning)
+        sys.exit(0)

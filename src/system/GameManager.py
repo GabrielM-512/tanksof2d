@@ -118,15 +118,19 @@ class GameManager:
         if (self.tank is not None) or (self.othertank is not None):
             try:
                 self.tank.health = 3
-                self.tank.rect.center = (self.width // 2, self.height // 2)
                 self.screenscroll = pygame.Vector2(0, 0)
                 self.screenscrolldiff = pygame.Vector2(0, 0)
 
                 self.othertank.health = 3
-                self.othertank.rect.center = (self.width // 2, self.height // 2)
+
+                self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
+                self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)
+
                 if initiate:
                     if not "reset" in self.senddict["actions"]:
                         self.senddict["actions"].append("reset")
+
+                print(self.playerId)
             except Exception as error:
                 print(f"Error resetting tanks: {error}")
                 self.kill()

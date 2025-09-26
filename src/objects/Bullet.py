@@ -5,17 +5,17 @@ import warnings
 from src.system.Hitbox import Hitbox
 
 class Bullet:
-    def __init__(self, parent, nPos, ang, objdict : dict):
+    def __init__(self, parent, nozzle_position, ang, objdict : dict):
         self.parent = parent
 
         self.icon_base = pygame.image.load("assets/PNG/Effects/Medium_Shell.png")
         self.icon_display = self.icon_base.__copy__()
 
-        self.hitbox = Hitbox(self.icon_display, nPos[0], nPos[1])
+        self.hitbox = Hitbox(self.icon_display, nozzle_position[0], nozzle_position[1])
         self.rect = self.icon_base.get_rect()
 
-        self.rect.centerx = nPos[0]
-        self.rect.centery = nPos[1]
+        self.rect.centerx = nozzle_position[0]
+        self.rect.centery = nozzle_position[1]
 
         self.speed = 15
         self.angle = ang
@@ -78,12 +78,12 @@ class Bullet:
             self.objdict = None
         except IndexError as e:
             warnings.warn(f"Error in removing {self} from objdict: {e}", RuntimeWarning)
-        except KeyError as e:
+        except KeyError:
             pass
 
-    def hit(self, hitBy):
+    def hit(self, hit_by):
         try:
-            if hitBy is self:
+            if hit_by is self:
                 return
             self.destroy()
         except KeyError:

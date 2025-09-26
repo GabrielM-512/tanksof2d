@@ -4,8 +4,8 @@ import socket
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 
-def reply(connectionManager, msg):
-    connectionManager.send(msg)
+def reply(connection_manager, msg):
+    connection_manager.send(msg)
 
 def callback(msg : dict):
     global connectionManager

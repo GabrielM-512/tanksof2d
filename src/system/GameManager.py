@@ -16,7 +16,7 @@ class GameManager:
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         
         self.playerId = None
-        self.mode : str = None
+        self.mode = None
 
         self.shotbullets = 0
 
@@ -77,21 +77,23 @@ class GameManager:
                     if self.tank.maxBullets > len(self.tank.bullets):
                         bullet = self.tank.shoot(self.objdict)
 
-                        self.objdict[f"{self.playerId}:Bullet:{self.shotbullets}"] = bullet
+                        if bullet is not None:
 
-                        if not "shoot" in self.senddict["actions"]:
-                            self.senddict["actions"].append("shoot")
+                            self.objdict[f"{self.playerId}:Bullet:{self.shotbullets}"] = bullet
 
-                        pos = self.tank.nozzle_position
-                        pos[0] += self.screenscroll[0]
-                        pos[1] += self.screenscroll[1]
+                            if not "shoot" in self.senddict["actions"]:
+                                self.senddict["actions"].append("shoot")
 
-                        self.senddict["shoot"] = {}
-                        self.senddict["shoot"]["angle"] = self.tank.turret_angle
-                        self.senddict["shoot"]["pos"] = pos # update with screenscroll
-                        self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet:{self.shotbullets}"
+                            pos = self.tank.nozzle_position
+                            pos[0] += self.screenscroll[0]
+                            pos[1] += self.screenscroll[1]
 
-                        self.shotbullets += 1
+                            self.senddict["shoot"] = {}
+                            self.senddict["shoot"]["angle"] = self.tank.turret_angle
+                            self.senddict["shoot"]["pos"] = pos # update with screenscroll
+                            self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet:{self.shotbullets}"
+
+                            self.shotbullets += 1
 
     def update(self, framecount):
 
@@ -255,7 +257,9 @@ class GameManager:
                         shootpos = pygame.Vector2(msg["shoot"]["pos"]) - self.screenscroll
 
                         bullet = self.othertank.shoot(self.objdict, pos=shootpos)
-                        self.objdict[msg["shoot"]["id"]] = bullet
+
+                        if bullet is not None:
+                            self.objdict[msg["shoot"]["id"]] = bullet
 
                         self.othertank.turret_angle = old_angle
 

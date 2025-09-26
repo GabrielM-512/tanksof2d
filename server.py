@@ -2,7 +2,6 @@ import socket
 import threading
 import json
 import sys
-import warnings
 
 modes = {
     0 : "PVP",
@@ -23,7 +22,7 @@ try:
                                    " PVE: 1\n"
                                    "Select gamemode: ")), 0), 1)]
     print(f"Selected Mode: {mode}")
-except:
+except KeyError:
     print("Invalid mode, set to PVE")
     mode = "PVE"
 

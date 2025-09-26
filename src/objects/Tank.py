@@ -95,6 +95,9 @@ class Tank:
         self.health = 3
         self.mode = None
     def shoot(self, objdict, pos = None):
+        if self.health <= 0:
+            return None
+
         if pos is None:
             bullet = Bullet(self, self.nozzle_position, self.turret_angle, objdict)
         else:
@@ -183,8 +186,8 @@ class Tank:
             for bullet in self.bullets:
                 bullet.update(screen, screenscrolldif_bullet)
 
-    def collisions(self, objdict, othertankID):
-        if othertankID is not None and self.hitbox.collides(objdict[othertankID].hitbox):
+    def collisions(self, objdict, othertank_id):
+        if othertank_id is not None and self.hitbox.collides(objdict[othertank_id].hitbox):
             pass # do logic for hitting the other tank
         for bullet in self.bullets:
             bullet.collision(objdict)

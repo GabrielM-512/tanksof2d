@@ -18,21 +18,21 @@ def main():
 	othertank = Tank(col=config["othercolor"])
 	othertank.rect.center = (config["resolution"]["width"] // 2, config["resolution"]["height"] // 2)
 
-	gameManager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tankobject=tank, other_tank=othertank)
-	gameManager.create_window(config["resolution"]["width"], config["resolution"]["height"], "Tank 2d")
+	game_manager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tankobject=tank, other_tank=othertank)
+	game_manager.create_window(config["resolution"]["width"], config["resolution"]["height"], "Tank 2d")
 
-	gameManager.senddict.clear()
-	gameManager.senddict["actions"] = []
+	game_manager.senddict.clear()
+	game_manager.senddict["actions"] = []
 
 	framecount = 0
 
 	while True:
-		gameManager.screen.fill((30,30,30))
-		gameManager.update(framecount)
+		game_manager.screen.fill((30,30,30))
+		game_manager.update(framecount)
 
 		pygame.display.update()
 
-		dT = clock.tick(120)
+		delta_time = clock.tick(120)
 		fps = clock.get_fps()
 
 		framecount += 1

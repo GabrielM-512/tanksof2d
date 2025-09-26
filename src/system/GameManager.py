@@ -56,6 +56,8 @@ class GameManager:
 
         self.enemy_dir_display_base = pygame.Surface((20, 20))
 
+        self.disconnect = False
+
         try:
             self.connection.connect()
         except Exception as error:
@@ -80,8 +82,7 @@ class GameManager:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 self.kill()
-                pygame.quit()
-                sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.tank.maxBullets > len(self.tank.bullets) and self.shootcooldown <= 0:
@@ -114,6 +115,9 @@ class GameManager:
     def update(self, framecount, deltatime):
         if self.screen is None:
             raise Exception("Screen was not defined")
+
+        if self.disconnect:
+            self.kill()
 
         self.shootcooldown -= deltatime
         self.handle_events()
@@ -173,17 +177,12 @@ class GameManager:
                     if not "reset" in self.senddict["actions"]:
                         self.senddict["actions"].append("reset")
 
-                print(self.playerId)
             except Exception as error:
                 print(f"Error resetting tanks: {error}")
                 self.kill()
-                pygame.quit()
-                sys.exit(67)
         else:
             warnings.warn("couldn't reset tank; tank was None", RuntimeWarning)
             self.kill()
-            pygame.quit()
-            sys.exit(67)
 
     def handle_input(self):
         if self.tank is None:
@@ -318,6 +317,9 @@ class GameManager:
                             pass
                             #warnings.warn(f"KeyError in hit action: {error}", RuntimeWarning)
                     case "connect":
+                        if "actions" not in self.senddict.keys():
+                            self.senddict["actions"] = []
+                        self.senddict["actions"].append("playerLoadedIn")
                         self.playerId = msg["id"]
 
                         if self.playerId == 1:
@@ -341,7 +343,7 @@ class GameManager:
                             self.othertank.mode = self.playMode
                         else: raise Exception("othertank was none on server connect")
                     case "disconnect":
-                        self.connection.offline = True
+                        self.disconnect = True
                     case "playerLoadedIn":
                         self.TanksLoadedIn = True
                     case _:
@@ -376,4 +378,7 @@ class GameManager:
         bullet.destroy()
         
     def kill(self):
+        self.connection.send({"actions": ["disconnect"]})
         self.connection.close()
+        pygame.quit()
+        sys.exit()

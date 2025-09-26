@@ -22,7 +22,7 @@ try:
                                    " PVE: 1\n"
                                    "Select gamemode: ")), 0), 1)]
     print(f"Selected Mode: {mode}")
-except KeyError:
+except ValueError:
     print("Invalid mode, set to PVE")
     mode = "PVE"
 
@@ -39,6 +39,7 @@ def handle_client(conn, addr):
         "id": len(clients) - 1,
         "mode": mode
     }
+    print(data)
     data = json.dumps(data) + "\n"
     conn.sendall(data.encode())
 
@@ -106,6 +107,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("exited from keyboard interrupt")
     finally:
+        broadcast({"actions": ["disconnect"]})
         for c in clients:
             c.close()
         server.close()

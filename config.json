@@ -1,6 +1,6 @@
 {
   "connection": {
-    "IP": "tiny-mc.de",
+    "IP": "localhost",
     "PORT": 5000
   },
   "playercolor": "blue",

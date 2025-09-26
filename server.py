@@ -9,6 +9,8 @@ modes = {
     1 : "PVE"
 }
 
+server = None
+
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 
@@ -82,6 +84,7 @@ def broadcast(msg, sender=None):
                 pass  # ignore broken clients
 
 def start_server():
+    global server
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT))
     server.listen()
@@ -102,5 +105,9 @@ if __name__ == "__main__":
     try:
         start_server()
     except KeyboardInterrupt:
-        warnings.warn("exited from keyboard interrupt", UserWarning)
-        sys.exit(0)
+        print("exited from keyboard interrupt")
+    finally:
+        for c in clients:
+            c.close()
+        server.close()
+    sys.exit(0)

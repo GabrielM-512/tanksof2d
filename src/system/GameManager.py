@@ -38,8 +38,6 @@ class GameManager:
 
         self.screen = None
 
-        self.width = None
-        self.height = None
 
         self.offsetScreen = 100
 
@@ -50,6 +48,8 @@ class GameManager:
         self.playMode = None
 
         self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255,255,255))
+
+        self.enemy_dir_display_base = pygame.Surface((20, 20))
 
         try:
             self.connection.connect()
@@ -63,8 +63,7 @@ class GameManager:
         pygame.display.set_caption(description)
         self.screen = screen
 
-        self.width = width
-        self.height = height
+        self.enemy_dir_display_base = pygame.image.load("./assets/enemydir.png").convert_alpha()
 
     def set_tank_object(self, tank, tank_id):
         self.objdict[f"tank{tank_id}"] = tank
@@ -117,6 +116,19 @@ class GameManager:
             self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255, 255, 255))
 
         self.screen.blit(self.hpdisplay, (20, 20))
+
+        try:
+            enemydir = (90 - math.degrees(math.atan2(
+                (self.tank.rect.centery + 100) - (self.othertank.rect.centery + 100),  # dy
+                (self.tank.rect.centerx + 100) - (self.othertank.rect.centerx + 100)  # dx
+            ))) % 360
+        except ZeroDivisionError:
+            enemydir = 0  # same point
+        if not (0 <= self.othertank.rect.centerx + 100 <= self.screen.get_width() and 0 <= self.othertank.rect.centery + 100 <= self.screen.get_height()):
+            enemy_dir_display = pygame.transform.rotate(self.enemy_dir_display_base, enemydir)
+            enemydirrect = enemy_dir_display.get_rect()
+            enemydirrect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2 - 400)
+            self.screen.blit(enemy_dir_display, enemydirrect)
 
         self.tank.collisions(self.objdict, self.othertankID)
 

@@ -24,11 +24,13 @@ def main():
 	game_manager.senddict.clear()
 	game_manager.senddict["actions"] = []
 
+	delta_time = 0
+
 	framecount = 0
 
 	while True:
 		game_manager.screen.fill((30,30,30))
-		game_manager.update(framecount)
+		game_manager.update(framecount, delta_time)
 
 		pygame.display.update()
 

@@ -14,6 +14,7 @@ class GameManager:
 
     UPDATEFREQUENCY = 1
     SCREENLIMIT = 400
+    SHOOTINGCOOLDOWN = 2000 # in ms
 
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         
@@ -57,6 +58,8 @@ class GameManager:
             print(f"Connection to server failed, launching in Singleplayer: {error}")
             self.connection.offline = True
 
+        self.shootcooldown = 0
+
     def create_window(self, width, height, description):
         pygame.init()
         screen = pygame.display.set_mode((width, height))
@@ -76,10 +79,12 @@ class GameManager:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if self.tank.maxBullets > len(self.tank.bullets):
+                    if self.tank.maxBullets > len(self.tank.bullets) and self.shootcooldown <= 0:
                         bullet = self.tank.shoot(self.objdict)
 
                         if bullet is not None:
+
+                            self.shootcooldown = GameManager.SHOOTINGCOOLDOWN
 
                             self.objdict[f"{self.playerId}:Bullet:{self.shotbullets}"] = bullet
 
@@ -100,10 +105,12 @@ class GameManager:
                 if event.key == pygame.K_r:
                     if self.tank.health <= 0:
                         self.reset(initiate=True)
-    def update(self, framecount):
+    def update(self, framecount, deltatime):
 
         if self.screen is None:
             raise Exception("Screen was not defined")
+
+        self.shootcooldown -= deltatime
         self.handle_events()
         self.handle_input()
 

@@ -2,14 +2,14 @@ import pygame
 import sys
 import warnings
 
+pygame.init()
+
 from src.system.GameManager import GameManager
 from src.objects.Tank import Tank
 from src.system.jsonreader import parse_config
 
 def main():
 	config = parse_config()
-
-	pygame.init()
 
 	clock = pygame.time.Clock()
 

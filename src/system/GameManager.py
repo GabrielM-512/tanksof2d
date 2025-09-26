@@ -8,6 +8,8 @@ from src.system.ConnectionManager import ConnectionManager
 from src.objects.Tank import Tank
 from src.objects.Bullet import Bullet
 
+hpfont = pygame.font.SysFont("Arial", 30)
+
 class GameManager:
 
     UPDATEFREQUENCY = 1
@@ -46,6 +48,8 @@ class GameManager:
 
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
         self.playMode = None
+
+        self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255,255,255))
 
         try:
             self.connection.connect()
@@ -106,6 +110,13 @@ class GameManager:
 
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
+
+        if self.tank.health <= 0:
+            self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255, 0, 0))
+        else:
+            self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255, 255, 255))
+
+        self.screen.blit(self.hpdisplay, (20, 20))
 
         self.tank.collisions(self.objdict, self.othertankID)
 

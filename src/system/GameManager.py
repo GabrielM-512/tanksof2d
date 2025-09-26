@@ -71,7 +71,6 @@ class GameManager:
                 self.kill()
                 pygame.quit()
                 sys.exit()
-
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.tank.maxBullets > len(self.tank.bullets):
@@ -94,7 +93,9 @@ class GameManager:
                             self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet:{self.shotbullets}"
 
                             self.shotbullets += 1
-
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.reset(initiate=True)
     def update(self, framecount):
 
         if self.screen is None:
@@ -102,7 +103,6 @@ class GameManager:
         self.handle_events()
         self.handle_input()
 
-        # noinspection PyTypeChecker
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
 
@@ -112,6 +112,31 @@ class GameManager:
             self.connection.send(self.senddict)
             self.senddict.clear()
             self.senddict["actions"] = []
+
+    def reset(self,initiate = False):
+        if (self.tank is not None) or (self.othertank is not None):
+            try:
+                self.tank.health = 3
+                self.tank.rect.center = (self.width // 2, self.height // 2)
+                self.screenscroll = pygame.Vector2(0, 0)
+                self.screenscrolldiff = pygame.Vector2(0, 0)
+
+                self.othertank.health = 3
+                self.othertank.rect.center = (self.width // 2, self.height // 2)
+                if initiate:
+                    if not "reset" in self.senddict["actions"]:
+                        self.senddict["actions"].append("reset")
+            except Exception as error:
+                print(f"Error resetting tanks: {error}")
+                self.kill()
+                pygame.quit()
+                sys.exit(67)
+        else:
+            warnings.warn("couldn't reset tank; tank was None", RuntimeWarning)
+            self.kill()
+            pygame.quit()
+            sys.exit(67)
+        pass
 
     def handle_input(self):
         if self.tank is None:
@@ -129,6 +154,7 @@ class GameManager:
             self.tank.chassis_angle += self.tank.ROTATION_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
+
 
         self.screenscrolling()
 
@@ -207,7 +233,8 @@ class GameManager:
             for action in actions:
                 # noinspection PyUnreachableCode
                 match action:
-
+                    case "reset":
+                        self.reset()
                     case "move":
                         self.othertank.rect.x = msg["x"] - self.screenscroll[0]
                         self.othertank.rect.y = msg["y"] - self.screenscroll[1]

@@ -27,9 +27,9 @@ class Bullet:
 
         self.objdict = objdict
 
-    def update(self, screen : pygame.surface.Surface):
-        self.rect.x -= self.vx
-        self.rect.y -= self.vy
+    def update(self, screen : pygame.surface.Surface, screenscrolldif):
+        self.rect.x -= self.vx + screenscrolldif[0]
+        self.rect.y -= self.vy + screenscrolldif[1]
 
         self.hitbox.x = self.rect.x
         self.hitbox.y = self.rect.y
@@ -78,10 +78,15 @@ class Bullet:
             self.objdict = None
         except IndexError as e:
             warnings.warn(f"Error in removing {self} from objdict: {e}", RuntimeWarning)
+        except KeyError as e:
+            pass
 
     def hit(self, hitBy):
-        if hitBy is self:
-            return
-        self.destroy()
+        try:
+            if hitBy is self:
+                return
+            self.destroy()
+        except KeyError:
+            pass
 
 

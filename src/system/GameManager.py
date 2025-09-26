@@ -11,6 +11,7 @@ from src.objects.Bullet import Bullet
 class GameManager:
 
     UPDATEFREQUENCY = 1
+    SCREENLIMIT = 400
 
     def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
         
@@ -34,8 +35,16 @@ class GameManager:
         self.senddict = {}
 
         self.screen = None
-        self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
 
+        self.width = None
+        self.height = None
+
+        self.offsetScreen = 100
+
+        self.screenscroll = pygame.Vector2(0, 0)
+        self.screenscrolldiff = pygame.Vector2(0, 0)
+
+        self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
         self.playMode = None
 
         try:
@@ -49,6 +58,9 @@ class GameManager:
         screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption(description)
         self.screen = screen
+
+        self.width = width
+        self.height = height
 
     def set_tank_object(self, tank, tank_id):
         self.objdict[f"tank{tank_id}"] = tank
@@ -78,13 +90,14 @@ class GameManager:
                         self.shotbullets += 1
 
     def update(self, framecount):
+
         assert isinstance(self.objdict, dict)
 
         if self.screen is None:
             raise Exception("Screen was not defined")
         self.handle_input()
-        self.tank.update(self.screen)
-        self.othertank.update(self.screen)
+        self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
+        self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
 
         self.tank.collisions(self.objdict, self.othertankID)
 
@@ -111,11 +124,13 @@ class GameManager:
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
 
+        self.screenscrolling()
+
         if keys[pygame.K_w] or keys[pygame.K_s] or keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or keys[pygame.K_UP] or keys[pygame.K_DOWN]:
             if not "move" in self.senddict["actions"]:
                 self.senddict["actions"].append("move")
-            self.senddict["x"] = self.tank.rect.x
-            self.senddict["y"] = self.tank.rect.y
+            self.senddict["x"] = self.tank.rect.x - self.screenscroll[0]
+            self.senddict["y"] = self.tank.rect.y - self.screenscroll[1]
 
             if not "turn" in self.senddict["actions"]:
                 self.senddict["actions"].append("turn")
@@ -144,6 +159,74 @@ class GameManager:
 
             self.senddict["turret_angle"] = self.tank.turret_angle
 
+    def screenscrolling(self):
+        #calculate and update screenscroll
+        self.screenscrolldiff = pygame.Vector2(0, 0)
+
+
+        if self.tank.rect.centerx + self.offsetScreen > self.screen.get_width() - GameManager.SCREENLIMIT:
+            offsetx = self.tank.rect.centerx + self.offsetScreen - self.screen.get_width() + GameManager.SCREENLIMIT
+
+            self.tank.rect.centerx = self.screen.get_width() - GameManager.SCREENLIMIT - self.offsetScreen
+
+            self.screenscrolldiff[0] = offsetx
+            self.screenscroll[0] -= offsetx
+
+        elif self.tank.rect.centerx + self.offsetScreen < GameManager.SCREENLIMIT:
+            offsetx = self.tank.rect.centerx + self.offsetScreen - GameManager.SCREENLIMIT
+
+            self.tank.rect.centerx = GameManager.SCREENLIMIT - self.offsetScreen
+
+            self.screenscrolldiff[0] = offsetx
+            self.screenscroll[0] += offsetx
+
+        if self.tank.rect.centery + self.offsetScreen > self.screen.get_height() - GameManager.SCREENLIMIT:
+            offsety = self.tank.rect.centery + self.offsetScreen - self.screen.get_height() + GameManager.SCREENLIMIT
+
+            self.tank.rect.centery = self.screen.get_height() - GameManager.SCREENLIMIT - self.offsetScreen
+
+            self.screenscrolldiff[1] = offsety
+            self.screenscroll[1] -= offsety
+
+        elif self.tank.rect.centery + self.offsetScreen < GameManager.SCREENLIMIT:
+            offsety = self.tank.rect.centery + self.offsetScreen - GameManager.SCREENLIMIT
+
+            self.tank.rect.centery = GameManager.SCREENLIMIT - self.offsetScreen
+
+            self.screenscrolldiff[1] = offsety
+            self.screenscroll[1] += offsety
+
+
+
+
+        """if self.tank.rect.centerx + self.offsetScreen > self.width - GameManager.SCREENLIMIT:
+            offsetx = self.width - GameManager.SCREENLIMIT - self.tank.rect.centerx - self.offsetScreen
+
+            self.tank.rect.centerx = self.width - GameManager.SCREENLIMIT - self.offsetScreen 
+            self.screenscroll[0] += offsetx
+            self.screenscrolldiff[0] = offsetx"""
+
+        """if self.tank.rect.centerx + self.offsetScreen < GameManager.SCREENLIMIT:
+            offsetx = self.tank.rect.centerx - GameManager.SCREENLIMIT
+
+            self.tank.rect.centerx = GameManager.SCREENLIMIT - self.offsetScreen
+            self.screenscroll[0] += offsetx
+            self.screenscrolldiff[0] = offsetx
+
+        if self.tank.rect.centery + self.offsetScreen > self.height - GameManager.SCREENLIMIT:
+            offsety = self.height - GameManager.SCREENLIMIT - self.tank.rect.centerx - self.offsetScreen
+
+            self.tank.rect.centery = self.height - GameManager.SCREENLIMIT - self.offsetScreen 
+            self.screenscroll[1] += offsety
+            self.screenscrolldiff[1] = offsety
+
+        if self.tank.rect.centery + self.offsetScreen < GameManager.SCREENLIMIT:
+            offsety = self.tank.rect.centery - GameManager.SCREENLIMIT
+
+            self.tank.rect.centery = GameManager.SCREENLIMIT - self.offsetScreen
+            self.screenscroll[1] += offsety
+            self.screenscrolldiff[1] = offsety"""
+
     def handle_connection(self, msg : dict):
         try:
             actions = msg["actions"]
@@ -152,8 +235,8 @@ class GameManager:
                 match action:
 
                     case "move":
-                        self.othertank.rect.x = msg["x"]
-                        self.othertank.rect.y = msg["y"]
+                        self.othertank.rect.x = msg["x"] + self.screenscroll[0]
+                        self.othertank.rect.y = msg["y"] + self.screenscroll[1]
 
                     case "turn":
                         self.othertank.chassis_angle = msg["angle"] # seems to lag a little
@@ -161,22 +244,30 @@ class GameManager:
                     case "turn_turret":
                         self.othertank.turret_angle = msg["turret_angle"]
 
-                    case "shoot":
+                    case "shoot": # update
                         old_angle = self.othertank.turret_angle
                         self.othertank.turret_angle = msg["shoot"]["angle"]
 
-                        bullet = self.othertank.shoot(self.objdict, pos=msg["shoot"]["pos"])
+                        shootpos = pygame.Vector2(msg["shoot"]["pos"]) + self.screenscroll
+
+                        bullet = self.othertank.shoot(self.objdict, pos=shootpos)
                         self.objdict[msg["shoot"]["id"]] = bullet
 
                         self.othertank.turret_angle = old_angle
 
                     case "hit":
-                        obj = self.objdict[msg["hitinfo"]["hitObjectKey"]]
-                        bullet : Bullet = self.objdict[msg["hitinfo"]["bulletKey"]]
+                        try: 
+                            obj = self.objdict[msg["hitinfo"]["hitObjectKey"]]
+                            if obj == None:
+                                continue
 
-                        obj.hit(bullet)
-                        bullet.destroy()
-
+                            bullet : Bullet = self.objdict[msg["hitinfo"]["bulletKey"]]
+                            
+                            obj.hit(bullet)
+                            bullet.destroy()
+                        except KeyError as error:
+                            pass
+                            #warnings.warn(f"KeyError in hit action: {error}", RuntimeWarning)
                     case "connect":
                         self.playerId = msg["id"]
                         self.playMode = msg["mode"]
@@ -205,6 +296,9 @@ class GameManager:
             print(self.objdict)
 
     def hit_handler(self, obj, bullet : Bullet):
+
+        #if not bullet.parent.is_local:
+        #    return
 
         if not self.connection.offline:
             if "hit" not in self.senddict["actions"]:

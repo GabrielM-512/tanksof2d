@@ -90,6 +90,7 @@ class Tank:
     
         self.global_connect_point = (0,0)
 
+        self.is_local = is_local 
     def shoot(self, objdict, pos = None):
         if pos is None:
             bullet = Bullet(self, self.nozzle_position, self.turret_angle, objdict)
@@ -149,7 +150,11 @@ class Tank:
             screen.blit(self.final_display, self.rect)
 
 
-    def update(self, screen):
+    def update(self, screen, screenscrolldiff, screenscrolldif_bullet):
+        
+        self.rect.x -= screenscrolldiff[0]
+        self.rect.y -= screenscrolldiff[1]
+
         self.hitbox.x = self.rect.x
         self.hitbox.y = self.rect.y
 
@@ -168,7 +173,7 @@ class Tank:
 
         if len(self.bullets) > 0:
             for bullet in self.bullets:
-                bullet.update(screen)
+                bullet.update(screen, screenscrolldif_bullet)
 
     def collisions(self, objdict, othertankID):
         if othertankID is not None and self.hitbox.collides(objdict[othertankID].hitbox):

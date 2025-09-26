@@ -170,7 +170,7 @@ class GameManager:
             self.tank.rect.centerx = self.screen.get_width() - GameManager.SCREENLIMIT - self.offsetScreen
 
             self.screenscrolldiff[0] = offsetx
-            self.screenscroll[0] -= offsetx
+            self.screenscroll[0] += offsetx
 
         elif self.tank.rect.centerx + self.offsetScreen < GameManager.SCREENLIMIT:
             offsetx = (self.tank.rect.centerx + self.offsetScreen) - GameManager.SCREENLIMIT
@@ -186,7 +186,7 @@ class GameManager:
             self.tank.rect.centery = self.screen.get_height() - GameManager.SCREENLIMIT - self.offsetScreen
 
             self.screenscrolldiff[1] = offsety
-            self.screenscroll[1] -= offsety
+            self.screenscroll[1] += offsety
 
         elif self.tank.rect.centery + self.offsetScreen < GameManager.SCREENLIMIT:
             offsety = (self.tank.rect.centery + self.offsetScreen) - GameManager.SCREENLIMIT

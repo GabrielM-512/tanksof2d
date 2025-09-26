@@ -173,7 +173,7 @@ class GameManager:
             self.screenscroll[0] -= offsetx
 
         elif self.tank.rect.centerx + self.offsetScreen < GameManager.SCREENLIMIT:
-            offsetx = self.tank.rect.centerx + self.offsetScreen - GameManager.SCREENLIMIT
+            offsetx = GameManager.SCREENLIMIT - (self.tank.rect.centerx + self.offsetScreen)
 
             self.tank.rect.centerx = GameManager.SCREENLIMIT - self.offsetScreen
 
@@ -189,7 +189,7 @@ class GameManager:
             self.screenscroll[1] -= offsety
 
         elif self.tank.rect.centery + self.offsetScreen < GameManager.SCREENLIMIT:
-            offsety = self.tank.rect.centery + self.offsetScreen - GameManager.SCREENLIMIT
+            offsety = GameManager.SCREENLIMIT - (self.tank.rect.centery + self.offsetScreen)
 
             self.tank.rect.centery = GameManager.SCREENLIMIT - self.offsetScreen
 
@@ -235,8 +235,8 @@ class GameManager:
                 match action:
 
                     case "move":
-                        self.othertank.rect.x = msg["x"] - self.screenscroll[0]
-                        self.othertank.rect.y = msg["y"] - self.screenscroll[1]
+                        self.othertank.rect.x = msg["x"] + self.screenscroll[0]
+                        self.othertank.rect.y = msg["y"] + self.screenscroll[1]
 
                     case "turn":
                         self.othertank.chassis_angle = msg["angle"] # seems to lag a little

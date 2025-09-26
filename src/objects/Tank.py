@@ -68,7 +68,7 @@ class Tank:
 
         self.base_chassis_connect_point = (0, 35)
         self.base_turret_connect_point = (0, 54)
-        self.nozzle_position = (0, 100)
+        self.nozzle_position = [0, 100]
 
         self.chassis_connection_point = self.base_chassis_connect_point
         self.turret_connection_point = self.base_turret_connect_point
@@ -142,7 +142,7 @@ class Tank:
             
 
             local_nozzle_pos = pos_after_rot((0, -160 - Tank.BULLET_SPAWN_OFFSET), -self.turret_angle, (0, 0))
-            local_nozzle_pos = (local_nozzle_pos[0] + self.global_connect_point[0], local_nozzle_pos[1] + self.global_connect_point[1])
+            local_nozzle_pos = [local_nozzle_pos[0] + self.global_connect_point[0], local_nozzle_pos[1] + self.global_connect_point[1]]
             self.nozzle_position = local_nozzle_pos
 
             #pygame.draw.rect(screen, (255, 0, 0,), (self.nozzle_position, (2, 2))) # used for debugging
@@ -150,7 +150,7 @@ class Tank:
             screen.blit(self.final_display, self.rect)
 
 
-    def update(self, screen, screenscrolldiff, screenscrolldif_bullet):
+    def update(self, screen, screenscrolldiff : pygame.Vector2, screenscrolldif_bullet : pygame.Vector2):
         
         self.rect.x -= screenscrolldiff[0]
         self.rect.y -= screenscrolldiff[1]

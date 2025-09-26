@@ -83,9 +83,13 @@ class GameManager:
                         if not "shoot" in self.senddict["actions"]:
                             self.senddict["actions"].append("shoot")
 
+                        pos = self.tank.nozzle_position
+                        pos[0] += self.screenscroll[0]
+                        pos[1] += self.screenscroll[1]
+
                         self.senddict["shoot"] = {}
                         self.senddict["shoot"]["angle"] = self.tank.turret_angle
-                        self.senddict["shoot"]["pos"] = self.tank.nozzle_position # update with screenscroll
+                        self.senddict["shoot"]["pos"] = pos # update with screenscroll
                         self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet:{self.shotbullets}"
 
                         self.shotbullets += 1
@@ -97,6 +101,8 @@ class GameManager:
         if self.screen is None:
             raise Exception("Screen was not defined")
         self.handle_input()
+
+        # noinspection PyTypeChecker
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
 
@@ -130,8 +136,8 @@ class GameManager:
         if keys[pygame.K_w] or keys[pygame.K_s] or keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or keys[pygame.K_UP] or keys[pygame.K_DOWN]:
             if not "move" in self.senddict["actions"]:
                 self.senddict["actions"].append("move")
-            self.senddict["x"] = self.tank.rect.x - self.screenscroll[0]
-            self.senddict["y"] = self.tank.rect.y - self.screenscroll[1]
+            self.senddict["x"] = self.tank.rect.x + self.screenscroll[0]
+            self.senddict["y"] = self.tank.rect.y + self.screenscroll[1]
 
             if not "turn" in self.senddict["actions"]:
                 self.senddict["actions"].append("turn")
@@ -199,6 +205,8 @@ class GameManager:
         
         self.screenscrollacc += self.screenscrolldiff
 
+        #print(self.screenscroll)
+
         assert(self.screenscroll[0] == self.screenscrollacc[0])
         assert(self.screenscroll[1] == self.screenscrollacc[1])
 
@@ -237,6 +245,7 @@ class GameManager:
             actions = msg["actions"]
 
             for action in actions:
+                # noinspection PyUnreachableCode
                 match action:
 
                     case "move":
@@ -263,7 +272,7 @@ class GameManager:
                     case "hit":
                         try: 
                             obj = self.objdict[msg["hitinfo"]["hitObjectKey"]]
-                            if obj == None:
+                            if obj is None:
                                 continue
 
                             bullet : Bullet = self.objdict[msg["hitinfo"]["bulletKey"]]
@@ -320,6 +329,7 @@ class GameManager:
                 self.senddict["hitinfo"]["bulletKey"] = bulletkey[0]
             else:
                 warnings.warn(f"No key found for object: {obj} or bullet: {bullet}", RuntimeWarning)
+                print("continued")
         try:
             obj.hit(bullet)
         except:

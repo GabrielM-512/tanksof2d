@@ -14,7 +14,10 @@ print(f"Server IP: {IPAddr}")
 print("Server version 1.0")
 
 try:
-    mode = modes[min(max(int(input("Select gamemode: ")), 0), 1)]
+    mode = modes[min(max(int(input("Available Gamemodes:\n"
+                                   " PVP: 0\n"
+                                   " PVE: 1\n"
+                                   "Select gamemode: ")), 0), 1)]
     print(f"Selected Mode: {mode}")
 except:
     print("Invalid mode, set to PVE")

@@ -90,7 +90,10 @@ class Tank:
     
         self.global_connect_point = (0,0)
 
-        self.is_local = is_local 
+        self.is_local = is_local
+
+        self.health = 3
+        self.mode = None
     def shoot(self, objdict, pos = None):
         if pos is None:
             bullet = Bullet(self, self.nozzle_position, self.turret_angle, objdict)
@@ -101,6 +104,8 @@ class Tank:
         return bullet
         
     def draw(self, screen):
+            if self.health <= 0:
+                return
 
             self.final_display = self.final_display_base.__copy__()
 
@@ -159,7 +164,10 @@ class Tank:
         self.hitbox.y = self.rect.y
 
         self.draw(screen)
-        self.hitbox.update(self.final_display)
+        if self.health > 0:
+            self.hitbox.update(self.final_display)
+        else:
+            self.hitbox.update(pygame.Surface((0, 0)))
 
         """olist = list(self.hitbox.hitbox.outline())
         after_list = []
@@ -182,5 +190,5 @@ class Tank:
             bullet.collision(objdict)
 
     def hit(self, hitby):
-        pass
-        #print("oh no, I, ", self, " was hit by ", hitby)
+        if self.mode == "PVP" or not isinstance(hitby.parent, Tank):
+            self.health -= 1

@@ -278,6 +278,7 @@ class GameManager:
 
                         if self.tank is not None:
                             self.objdict[f"tank:{self.playerId}"] = self.tank
+                            self.tank.mode = self.playMode
                         else: raise Exception("tank was none on server connect")
 
                         if self.othertank is not None:
@@ -287,6 +288,8 @@ class GameManager:
                                 self.objdict["tank:0"] = self.othertank
                             else:
                                 raise Exception(f"couldn't assign othertank to id; self.playerID = {self.playerId}")
+
+                            self.othertank.mode = self.playMode
                         else: raise Exception("othertank was none on server connect")
 
                     case "disconnect":

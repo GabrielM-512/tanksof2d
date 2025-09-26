@@ -43,6 +43,7 @@ class GameManager:
 
         self.screenscroll = pygame.Vector2(0, 0)
         self.screenscrolldiff = pygame.Vector2(0, 0)
+        self.screenscrollacc = pygame.Vector2(0, 0)
 
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
         self.playMode = None
@@ -195,9 +196,11 @@ class GameManager:
 
             self.screenscrolldiff[1] = offsety
             self.screenscroll[1] += offsety
+        
+        self.screenscrollacc += self.screenscrolldiff
 
-        print(self.screenscrolldiff)
-
+        assert(self.screenscroll[0] == self.screenscrollacc[0])
+        assert(self.screenscroll[1] == self.screenscrollacc[1])
 
 
 

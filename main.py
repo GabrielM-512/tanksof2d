@@ -27,8 +27,6 @@ def main():
 	framecount = 0
 
 	while True:
-		gameManager.handle_events()
-
 		gameManager.screen.fill((30,30,30))
 		gameManager.update(framecount)
 

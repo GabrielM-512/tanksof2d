@@ -43,7 +43,6 @@ class GameManager:
 
         self.screenscroll = pygame.Vector2(0, 0)
         self.screenscrolldiff = pygame.Vector2(0, 0)
-        self.screenscrollacc = pygame.Vector2(0, 0)
 
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
         self.playMode = None
@@ -96,10 +95,9 @@ class GameManager:
 
     def update(self, framecount):
 
-        assert isinstance(self.objdict, dict)
-
         if self.screen is None:
             raise Exception("Screen was not defined")
+        self.handle_events()
         self.handle_input()
 
         # noinspection PyTypeChecker
@@ -107,7 +105,6 @@ class GameManager:
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
 
         self.tank.collisions(self.objdict, self.othertankID)
-
 
         if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict) > 1:
             self.connection.send(self.senddict)
@@ -202,13 +199,6 @@ class GameManager:
 
             self.screenscrolldiff[1] = offsety
             self.screenscroll[1] += offsety
-        
-        self.screenscrollacc += self.screenscrolldiff
-
-        #print(self.screenscroll)
-
-        assert(self.screenscroll[0] == self.screenscrollacc[0])
-        assert(self.screenscroll[1] == self.screenscrollacc[1])
 
 
 
@@ -279,7 +269,7 @@ class GameManager:
                             
                             obj.hit(bullet)
                             bullet.destroy()
-                        except KeyError as error:
+                        except KeyError:
                             pass
                             #warnings.warn(f"KeyError in hit action: {error}", RuntimeWarning)
                     case "connect":

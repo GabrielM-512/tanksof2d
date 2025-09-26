@@ -237,8 +237,8 @@ class GameManager:
                 match action:
 
                     case "move":
-                        self.othertank.rect.x = msg["x"] + self.screenscroll[0]
-                        self.othertank.rect.y = msg["y"] + self.screenscroll[1]
+                        self.othertank.rect.x = msg["x"] - self.screenscroll[0]
+                        self.othertank.rect.y = msg["y"] - self.screenscroll[1]
 
                     case "turn":
                         self.othertank.chassis_angle = msg["angle"] # seems to lag a little
@@ -250,7 +250,7 @@ class GameManager:
                         old_angle = self.othertank.turret_angle
                         self.othertank.turret_angle = msg["shoot"]["angle"]
 
-                        shootpos = pygame.Vector2(msg["shoot"]["pos"]) + self.screenscroll
+                        shootpos = pygame.Vector2(msg["shoot"]["pos"]) - self.screenscroll
 
                         bullet = self.othertank.shoot(self.objdict, pos=shootpos)
                         self.objdict[msg["shoot"]["id"]] = bullet

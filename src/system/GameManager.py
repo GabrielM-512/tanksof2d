@@ -85,7 +85,7 @@ class GameManager:
 
                         self.senddict["shoot"] = {}
                         self.senddict["shoot"]["angle"] = self.tank.turret_angle
-                        self.senddict["shoot"]["pos"] = self.tank.nozzle_position
+                        self.senddict["shoot"]["pos"] = self.tank.nozzle_position # update with screenscroll
                         self.senddict["shoot"]["id"] = f"{self.playerId}:Bullet:{self.shotbullets}"
 
                         self.shotbullets += 1

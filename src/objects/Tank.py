@@ -61,7 +61,7 @@ class Tank:
 
 
 
-        self.final_display_base = transparent_surface(self.chassis_display_base.get_width() + 200, self.chassis_display_base.get_height() + 200)
+        self.final_display_base = transparent_surface(self.chassis_display_base.get_width() + 220, self.chassis_display_base.get_height() + 220)
 
         self.rect = self.chassis_display_base.get_rect()
         self.turretRect = self.turret_base_icon.get_rect()

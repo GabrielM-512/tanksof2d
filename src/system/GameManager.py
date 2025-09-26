@@ -196,6 +196,8 @@ class GameManager:
             self.screenscrolldiff[1] = offsety
             self.screenscroll[1] += offsety
 
+        print(self.screenscrolldiff)
+
 
 
 

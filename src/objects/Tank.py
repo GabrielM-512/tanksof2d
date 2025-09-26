@@ -58,9 +58,6 @@ class Tank:
                 self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_" + chassis_model + ".png")
                 self.turret_base_icon = pygame.image.load("assets/PNG/Weapon_Color_A/Gun_" + turret_model + ".png")
 
-
-
-
         self.final_display_base = transparent_surface(self.chassis_display_base.get_width() + 220, self.chassis_display_base.get_height() + 220)
 
         self.rect = self.chassis_display_base.get_rect()
@@ -82,7 +79,6 @@ class Tank:
 
         self.hitbox = Hitbox(self.chassis_display, 10, 10)
         self.bullets = []
-        self.health = 100
         self.maxBullets = 5
 
         self.offsetx = self.hitbox.x
@@ -93,7 +89,9 @@ class Tank:
         self.is_local = is_local
 
         self.health = 3
+        self.living = True
         self.mode = None
+        
     def shoot(self, objdict, pos = None):
         if self.health <= 0:
             return None
@@ -132,8 +130,6 @@ class Tank:
 
             turr_connect_point = pos_after_rot(self.base_turret_connect_point, -self.turret_angle, (0, 0))
 
-
-
             offsetx = self.chassis_connection_point[0] - self.rect.centerx
             offsety = self.chassis_connection_point[1] - self.rect.centery
 
@@ -168,8 +164,10 @@ class Tank:
 
         self.draw(screen)
         if self.health > 0:
+            self.living = True
             self.hitbox.update(self.final_display)
         else:
+            self.living = False
             self.hitbox.update(pygame.Surface((0, 0)))
 
         """olist = list(self.hitbox.hitbox.outline())

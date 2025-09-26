@@ -21,6 +21,8 @@ class GameManager:
         self.playerId = None
         self.mode = None
 
+        self.TanksLoadedIn = False
+
         self.shotbullets = 0
 
         self.tank = tankobject
@@ -39,7 +41,6 @@ class GameManager:
 
         self.screen = None
 
-
         self.offsetScreen = 100
 
         self.screenscroll = pygame.Vector2(0, 0)
@@ -48,7 +49,10 @@ class GameManager:
         self.connection = ConnectionManager(host=ip, port=port, callback=self.handle_connection)
         self.playMode = None
 
+        self.points = [0, 0]
+
         self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255,255,255))
+        self.pdisplay = hpfont.render(f"POINTS {self.points[0]}:{self.points[1]}", True, (255,255,255))
 
         self.enemy_dir_display_base = pygame.Surface((20, 20))
 
@@ -57,6 +61,8 @@ class GameManager:
         except Exception as error:
             print(f"Connection to server failed, launching in Singleplayer: {error}")
             self.connection.offline = True
+            self.TanksLoadedIn = True
+
 
         self.shootcooldown = 0
 
@@ -65,7 +71,6 @@ class GameManager:
         screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption(description)
         self.screen = screen
-
         self.enemy_dir_display_base = pygame.image.load("./assets/enemydir.png").convert_alpha()
 
     def set_tank_object(self, tank, tank_id):
@@ -105,14 +110,19 @@ class GameManager:
                 if event.key == pygame.K_r:
                     if self.tank.health <= 0:
                         self.reset(initiate=True)
+    
     def update(self, framecount, deltatime):
-
         if self.screen is None:
             raise Exception("Screen was not defined")
 
         self.shootcooldown -= deltatime
         self.handle_events()
         self.handle_input()
+
+        if self.tank.health <= 0 and self.othertank.health > 0 and self.tank.living:
+            self.points[1] += 1
+        elif self.tank.health > 0 and self.othertank.health <= 0 and self.othertank.living:
+            self.points[0] += 1
 
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
@@ -122,7 +132,10 @@ class GameManager:
         else:
             self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255, 255, 255))
 
+        self.pdisplay = hpfont.render(f"POINTS {self.points[0]}:{self.points[1]}", True, (255,255,255))
+
         self.screen.blit(self.hpdisplay, (20, 20))
+        self.screen.blit(self.pdisplay, (20, 60))
 
         try:
             enemydir = (90 - math.degrees(math.atan2(
@@ -188,7 +201,6 @@ class GameManager:
             self.tank.chassis_angle += self.tank.ROTATION_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
-
 
         self.screenscrolling()
 
@@ -307,6 +319,10 @@ class GameManager:
                             #warnings.warn(f"KeyError in hit action: {error}", RuntimeWarning)
                     case "connect":
                         self.playerId = msg["id"]
+
+                        if self.playerId == 1:
+                            self.TanksLoadedIn = True
+
                         self.playMode = msg["mode"]
 
                         if self.tank is not None:
@@ -324,10 +340,10 @@ class GameManager:
 
                             self.othertank.mode = self.playMode
                         else: raise Exception("othertank was none on server connect")
-
                     case "disconnect":
                         self.connection.offline = True
-
+                    case "playerLoadedIn":
+                        self.TanksLoadedIn = True
                     case _:
                         warnings.warn(f"Unknown action received from server: {action}", RuntimeWarning)
 
@@ -336,10 +352,6 @@ class GameManager:
             print(self.objdict)
 
     def hit_handler(self, obj, bullet : Bullet):
-
-        #if not bullet.parent.is_local:
-        #    return
-
         if not self.connection.offline:
             if "hit" not in self.senddict["actions"]:
                 self.senddict["actions"].append("hit")

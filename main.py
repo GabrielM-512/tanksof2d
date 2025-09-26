@@ -28,16 +28,42 @@ def main():
 
 	framecount = 0
 
+	loadingScreen = pygame.image.load("assets/loadingScreen.png").convert()
+	loadingScreen = pygame.transform.smoothscale(
+		loadingScreen,
+		(config["resolution"]["width"], config["resolution"]["height"])
+	)
+	game_manager.screen.blit(loadingScreen, (0,0))
+	pygame.display.update()
+	pygame.time.wait(2000)
+	game_manager.senddict["actions"].append("playerLoadedIn")
+	game_manager.update(framecount,120)
 	while True:
 		game_manager.screen.fill((30,30,30))
-		game_manager.update(framecount, delta_time)
+		if game_manager.TanksLoadedIn:
+			game_manager.update(framecount, delta_time)
 
-		pygame.display.update()
+			pygame.display.update()
 
-		delta_time = clock.tick(120)
-		fps = clock.get_fps()
+			delta_time = clock.tick(120)
+			fps = clock.get_fps()
 
-		framecount += 1
+			framecount += 1
+		else:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit()
+					sys.exit(0)
+				elif event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						pygame.quit()
+						sys.exit(0)
+
+			text_font = pygame.font.Font(None, 50)
+			text_surface = text_font.render("Waiting for other player to load in...", True, (255, 255, 255))
+			text_rect = text_surface.get_rect(center=(config["resolution"]["width"] // 2, config["resolution"]["height"] // 2))
+			game_manager.screen.blit(text_surface, text_rect)
+			pygame.display.update()
 
 
 if __name__ == "__main__":

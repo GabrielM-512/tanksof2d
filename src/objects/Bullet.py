@@ -63,7 +63,7 @@ class Bullet:
 
     def collision(self, objdict):
         for obj in objdict.values():
-            if obj is not self and obj is not self.parent and hasattr(obj, "hitbox"):
+            if obj is not self and obj is not self.parent and hasattr(obj, "hitbox") and self.parent.is_local:
                 if self.hitbox.collides(obj.hitbox):
                     self.parent.callback(obj, self)
                     break

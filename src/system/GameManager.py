@@ -235,8 +235,8 @@ class GameManager:
                 match action:
 
                     case "move":
-                        self.othertank.rect.x = msg["x"] + self.screenscroll[0]
-                        self.othertank.rect.y = msg["y"] + self.screenscroll[1]
+                        self.othertank.rect.x = msg["x"] - self.screenscroll[0]
+                        self.othertank.rect.y = msg["y"] - self.screenscroll[1]
 
                     case "turn":
                         self.othertank.chassis_angle = msg["angle"] # seems to lag a little

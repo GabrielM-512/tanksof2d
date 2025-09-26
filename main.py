@@ -14,7 +14,9 @@ def main():
 	clock = pygame.time.Clock()
 
 	tank = Tank(config["playercolor"], is_local=True)
+	tank.rect.center = (config["resolution"]["width"] // 2 + 100, config["resolution"]["height"] // 2 + 100)
 	othertank = Tank(col=config["othercolor"])
+	othertank.rect.center = (config["resolution"]["width"] // 2 + 100, config["resolution"]["height"] // 2 + 100)
 
 	gameManager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tankobject=tank, other_tank=othertank)
 	gameManager.create_window(config["resolution"]["width"], config["resolution"]["height"], "Tank 2d")

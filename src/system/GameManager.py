@@ -95,7 +95,8 @@ class GameManager:
                             self.shotbullets += 1
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    self.reset(initiate=True)
+                    if self.tank.health <= 0:
+                        self.reset(initiate=True)
     def update(self, framecount):
 
         if self.screen is None:
@@ -136,7 +137,6 @@ class GameManager:
             self.kill()
             pygame.quit()
             sys.exit(67)
-        pass
 
     def handle_input(self):
         if self.tank is None:

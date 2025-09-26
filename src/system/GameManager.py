@@ -166,9 +166,7 @@ class GameManager:
             self.senddict["turret_angle"] = self.tank.turret_angle
 
     def screenscrolling(self):
-        #calculate and update screenscroll
         self.screenscrolldiff = pygame.Vector2(0, 0)
-
 
         if self.tank.rect.centerx + self.offsetScreen > self.screen.get_width() - GameManager.SCREENLIMIT:
             offsetx = self.tank.rect.centerx + self.offsetScreen - self.screen.get_width() + GameManager.SCREENLIMIT
@@ -201,36 +199,6 @@ class GameManager:
 
             self.screenscrolldiff[1] = offsety
             self.screenscroll[1] += offsety
-
-
-
-        """if self.tank.rect.centerx + self.offsetScreen > self.width - GameManager.SCREENLIMIT:
-            offsetx = self.width - GameManager.SCREENLIMIT - self.tank.rect.centerx - self.offsetScreen
-
-            self.tank.rect.centerx = self.width - GameManager.SCREENLIMIT - self.offsetScreen 
-            self.screenscroll[0] += offsetx
-            self.screenscrolldiff[0] = offsetx"""
-
-        """if self.tank.rect.centerx + self.offsetScreen < GameManager.SCREENLIMIT:
-            offsetx = self.tank.rect.centerx - GameManager.SCREENLIMIT
-
-            self.tank.rect.centerx = GameManager.SCREENLIMIT - self.offsetScreen
-            self.screenscroll[0] += offsetx
-            self.screenscrolldiff[0] = offsetx
-
-        if self.tank.rect.centery + self.offsetScreen > self.height - GameManager.SCREENLIMIT:
-            offsety = self.height - GameManager.SCREENLIMIT - self.tank.rect.centerx - self.offsetScreen
-
-            self.tank.rect.centery = self.height - GameManager.SCREENLIMIT - self.offsetScreen 
-            self.screenscroll[1] += offsety
-            self.screenscrolldiff[1] = offsety
-
-        if self.tank.rect.centery + self.offsetScreen < GameManager.SCREENLIMIT:
-            offsety = self.tank.rect.centery - GameManager.SCREENLIMIT
-
-            self.tank.rect.centery = GameManager.SCREENLIMIT - self.offsetScreen
-            self.screenscroll[1] += offsety
-            self.screenscrolldiff[1] = offsety"""
 
     def handle_connection(self, msg : dict):
         try:

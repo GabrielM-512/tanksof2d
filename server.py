@@ -10,6 +10,9 @@ modes = {
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 
+print(f"Server IP: {IPAddr}")
+print("Server version 1.0")
+
 try:
     mode = modes[min(max(int(input("Select gamemode: ")), 0), 1)]
     print(f"Selected Mode: {mode}")

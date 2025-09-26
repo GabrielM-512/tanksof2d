@@ -152,8 +152,8 @@ class Tank:
 
     def update(self, screen, screenscrolldiff, screenscrolldif_bullet):
         
-        self.rect.x += screenscrolldiff[0]
-        self.rect.y += screenscrolldiff[1]
+        self.rect.x -= screenscrolldiff[0]
+        self.rect.y -= screenscrolldiff[1]
 
         self.hitbox.x = self.rect.x
         self.hitbox.y = self.rect.y

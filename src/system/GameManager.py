@@ -156,7 +156,7 @@ class GameManager:
 
         self.tank.collisions(self.objdict, self.othertankID)
 
-        if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict) > 1:
+        if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict) > 0:
             self.connection.send(self.senddict)
             self.senddict.clear()
             self.senddict["actions"] = []
@@ -169,10 +169,12 @@ class GameManager:
                 self.screenscrolldiff = pygame.Vector2(0, 0)
 
                 self.othertank.health = 3
-
-                self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
-                self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)
-
+                try: 
+                    self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
+                    self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)
+                except Exception as e:
+                    print(e, " in reset()")
+                
                 if initiate:
                     if not "reset" in self.senddict["actions"]:
                         self.senddict["actions"].append("reset")

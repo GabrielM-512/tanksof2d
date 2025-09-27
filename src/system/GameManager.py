@@ -53,6 +53,7 @@ class GameManager:
 
         self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255,255,255))
         self.pdisplay = hpfont.render(f"POINTS {self.points[0]}:{self.points[1]}", True, (255,255,255))
+        self.resetdisplay = hpfont.render("You died! Reset with 'R'", True, (255, 255, 255))
 
         self.bg_texture = pygame.image.load("./assets/background_mud.jpg")
 
@@ -139,6 +140,9 @@ class GameManager:
             self.points[0] += 1
             self.has_added_point = True
 
+        if self.tank.health <= 0:
+            self.screen.blit(self.resetdisplay, (self.screen.get_width() // 2 - self.resetdisplay.get_width() // 2, 300))
+
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
 
@@ -182,6 +186,9 @@ class GameManager:
                 self.othertank.health = 3
 
                 self.has_added_point = False
+
+                self.tank.chassis_angle = 0
+                self.othertank.chassis_angle = 0
                 try: 
                     self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
                     self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)

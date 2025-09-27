@@ -54,6 +54,8 @@ class GameManager:
         self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255,255,255))
         self.pdisplay = hpfont.render(f"POINTS {self.points[0]}:{self.points[1]}", True, (255,255,255))
 
+        self.bg_texture = pygame.image.load("./assets/background_mud.jpg")
+
         self.enemy_dir_display_base = pygame.Surface((20, 20))
 
         self.disconnect = False
@@ -115,6 +117,11 @@ class GameManager:
                         self.reset(initiate=True)
     
     def update(self, framecount, deltatime):
+
+        for i in range(-2, self.screen.get_width() // self.bg_texture.get_width() + 2):
+            for j in range(-2, self.screen.get_height() // self.bg_texture.get_height() + 2):
+                self.screen.blit(self.bg_texture, (i * self.bg_texture.get_width() - (self.screenscroll[0] % self.bg_texture.get_width()), j * self.bg_texture.get_height() - (self.screenscroll[1] % self.bg_texture.get_height())))
+
         if self.screen is None:
             raise Exception("Screen was not defined")
 

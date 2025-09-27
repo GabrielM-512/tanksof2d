@@ -58,6 +58,8 @@ class GameManager:
 
         self.disconnect = False
 
+        self.has_added_point = False
+
         try:
             self.connection.connect()
         except Exception as error:
@@ -123,10 +125,12 @@ class GameManager:
         self.handle_events()
         self.handle_input()
 
-        if self.tank.health <= 0 and self.othertank.health > 0 and self.tank.living:
+        if self.tank.health <= 0 and self.othertank.health > 0 and not self.has_added_point:
             self.points[1] += 1
-        elif self.tank.health > 0 and self.othertank.health <= 0 and self.othertank.living:
+            self.has_added_point = True
+        elif self.tank.health > 0 and self.othertank.health <= 0 and not self.has_added_point:
             self.points[0] += 1
+            self.has_added_point = True
 
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
@@ -169,6 +173,8 @@ class GameManager:
                 self.screenscrolldiff = pygame.Vector2(0, 0)
 
                 self.othertank.health = 3
+
+                self.has_added_point = False
                 try: 
                     self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
                     self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)

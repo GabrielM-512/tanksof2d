@@ -1,14 +1,14 @@
 {
   "connection": {
-    "IP": "tiny-mc.de",
+    "IP": "localhost",
     "PORT": 5000
   },
   "playercolor": "blue",
   "othercolor": "red",
 
   "resolution": {
-    "width": 1920,
-    "height": 1080
+    "width": 1680,
+    "height": 1050
   }
 
 }

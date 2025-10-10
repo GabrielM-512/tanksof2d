@@ -441,8 +441,8 @@ class GameManager:
                 print("continued")
         try:
             obj.hit(bullet)
-        except:
-            warnings.warn(f"error in hit_handler: obj = {obj}; bullet = {bullet}", RuntimeWarning)
+        except Exception as error:
+            warnings.warn(f"error: {error} in hit_handler: obj = {obj}; bullet = {bullet}", RuntimeWarning)
 
         bullet.destroy()
         

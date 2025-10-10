@@ -109,5 +109,6 @@ if __name__ == "__main__":
         broadcast({"actions": ["disconnect"]})
         for c in clients:
             c.close()
+        # noinspection PyUnresolvedReferences
         server.close()
     sys.exit(0)

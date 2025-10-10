@@ -42,8 +42,9 @@ class Tank:
 
     BULLET_SPAWN_OFFSET = 20
 
-    def __init__(self, col : str = "blue", chassis_model : str = "02", turret_model : str = "01", callback = None, is_local : bool = False):
+    def __init__(self, col : str = "blue", chassis_model : str = "02", turret_model : str = "01", is_local : bool = False):
 
+        # noinspection PyUnreachableCode
         match col:
             case "red":
                 self.chassis_display_base = pygame.image.load("assets/PNG/Hulls_Color_A/Hull_" + chassis_model + ".png")

@@ -31,12 +31,12 @@ def main():
 
 	framecount = 0
 
-	loadingScreen = pygame.image.load("assets/loadingScreen.png").convert()
-	loadingScreen = pygame.transform.smoothscale(
-		loadingScreen,
+	loading_screen = pygame.image.load("assets/loadingScreen.png").convert()
+	loading_screen = pygame.transform.smoothscale(
+		loading_screen,
 		(config["resolution"]["width"], config["resolution"]["height"])
 	)
-	game_manager.screen.blit(loadingScreen, (0,0))
+	game_manager.screen.blit(loading_screen, (0,0))
 	pygame.display.update()
 	pygame.time.wait(2000)
 	game_manager.senddict["actions"].append("playerLoadedIn")
@@ -55,7 +55,6 @@ def main():
 			pygame.display.update()
 
 			delta_time = clock.tick(120)
-			fps = clock.get_fps()
 
 			framecount += 1
 
@@ -79,5 +78,6 @@ if __name__ == "__main__":
 		main()
 	except KeyboardInterrupt:
 		warnings.warn("exited from keyboard interrupt", UserWarning)
+		# noinspection PyUnresolvedReferences
 		game_manager.kill()
 sys.exit(0)

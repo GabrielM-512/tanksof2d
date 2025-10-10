@@ -170,7 +170,8 @@ class GameManager:
         except ZeroDivisionError:
             enemydir = 0  # same point
 
-        if not (0 <= self.othertank.rect.centerx + 100 <= self.screen.get_width() and 0 <= self.othertank.rect.centery + 100 <= self.screen.get_height()) and self.othertank.health > 0:
+        # if othertank is on screen and both tanks are  alive
+        if not (0 <= self.othertank.rect.centerx + 100 <= self.screen.get_width() and 0 <= self.othertank.rect.centery + 100 <= self.screen.get_height()) and self.othertank.health > 0 and self.tank.health > 0:
             enemy_dir_display = pygame.transform.rotate(self.enemy_dir_display_base, enemydir)
             enemydirrect = enemy_dir_display.get_rect()
             enemydirrect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2 - 400)
@@ -196,11 +197,31 @@ class GameManager:
 
                 self.tank.chassis_angle = 0
                 self.othertank.chassis_angle = 0
+
+                self.shootcooldown = 0
+
                 try: 
                     self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
                     self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)
                 except Exception as e:
                     print(e, " in reset()")
+
+                # remove the bullets
+                try:
+                    object_count = 0
+                    keys : list = list(self.objdict.keys())
+
+                    while object_count < len(self.objdict):
+                        key = keys[object_count]
+
+                        if isinstance(self.objdict[key], Bullet):
+                            self.objdict[key].destroy()
+                            keys = list(self.objdict.keys())
+                        else:
+                            object_count += 1
+
+                except Exception as e:
+                    print(e, f" in reset(), {initiate}")
                 
                 if initiate:
                     if not "reset" in self.senddict["actions"]:

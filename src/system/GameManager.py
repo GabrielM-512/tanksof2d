@@ -188,10 +188,10 @@ class GameManager:
         if (self.tank is not None) or (self.othertank is not None):
             try:
                 self.tank.health = 3
+                self.othertank.health = 3
+
                 self.screenscroll = pygame.Vector2(0, 0)
                 self.screenscrolldiff = pygame.Vector2(0, 0)
-
-                self.othertank.health = 3
 
                 self.has_added_point = False
 
@@ -434,7 +434,6 @@ class GameManager:
             objkey = [key for key, val in self.objdict.items() if val == obj]
 
             if len(bulletkey) > 0 and len(objkey) > 0:
-                #self.senddict["hitinfo"].append({"hitobject": objkey[0], "bullet": bulletkey[0]})
                 self.senddict["hitinfo"]["hitObjectKey"] = objkey[0]
                 self.senddict["hitinfo"]["bulletKey"] = bulletkey[0]
             else:

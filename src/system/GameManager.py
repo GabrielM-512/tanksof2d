@@ -68,6 +68,8 @@ class GameManager:
 
         self.shootcooldown = 0
 
+        self.do_reset = False
+
     def create_window(self, width, height, description):
         pygame.init()
         screen = pygame.display.set_mode((width, height))
@@ -118,6 +120,9 @@ class GameManager:
 
         if self.disconnect:
             self.kill()
+
+        if self.do_reset:
+            self.reset()
 
         self.shootcooldown -= deltatime
         self.handle_events()
@@ -279,7 +284,7 @@ class GameManager:
                 # noinspection PyUnreachableCode
                 match action:
                     case "reset":
-                        self.reset()
+                        self.do_reset = True
                     case "move":
                         self.othertank.rect.x = msg["x"] - self.screenscroll[0]
                         self.othertank.rect.y = msg["y"] - self.screenscroll[1]

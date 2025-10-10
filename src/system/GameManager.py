@@ -267,6 +267,11 @@ class GameManager:
         if self.tank.velocity < -self.tank.MAX_SPEED:
             self.tank.velocity = -self.tank.MAX_SPEED
 
+        if keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+            if self.tank.velocity > self.tank.MAX_TURN_SPEED:
+                self.tank.velocity -= self.tank.TURN_DECELERATION
+            elif self.tank.velocity < -self.tank.MAX_TURN_SPEED:
+                self.tank.velocity += self.tank.TURN_DECELERATION
 
         self.tank.rect.x += self.tank.velocity * math.sin(math.radians(self.tank.chassis_angle))
         self.tank.rect.y += self.tank.velocity * math.cos(math.radians(self.tank.chassis_angle))

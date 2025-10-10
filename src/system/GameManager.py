@@ -146,11 +146,11 @@ class GameManager:
             self.points[0] += 1
             self.has_added_point = True
 
-        if self.tank.health <= 0:
-            self.screen.blit(self.resetdisplay, (self.screen.get_width() // 2 - self.resetdisplay.get_width() // 2, 300))
-
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
+
+        if self.tank.health <= 0:
+            self.screen.blit(self.resetdisplay, (self.screen.get_width() // 2 - self.resetdisplay.get_width() // 2, 300))
 
         if self.tank.health <= 0:
             self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255, 0, 0))
@@ -179,7 +179,7 @@ class GameManager:
 
         self.tank.collisions(self.objdict, self.othertankID)
 
-        if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict) > 0:
+        if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict['actions']) > 0:
             self.connection.send(self.senddict)
             self.senddict.clear()
             self.senddict["actions"] = []

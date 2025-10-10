@@ -5,7 +5,7 @@ import warnings
 from src.system.Hitbox import Hitbox
 
 class Bullet:
-    def __init__(self, parent, nozzle_position, ang, objdict : dict):
+    def __init__(self, parent, nozzle_position, angle, objdict : dict):
         self.parent = parent
 
         self.icon_base = pygame.image.load("assets/PNG/Effects/Medium_Shell.png")
@@ -18,12 +18,12 @@ class Bullet:
         self.rect.centery = nozzle_position[1]
 
         self.speed = 15
-        self.angle = ang
+        self.angle = angle
 
         self.length = 1000
 
-        self.vx = self.speed * math.sin(math.radians(self.angle))
-        self.vy = self.speed * math.cos(math.radians(self.angle))
+        self.vx = self.speed * math.sin(math.radians(self.angle)) - self.parent.velocity * math.sin(math.radians(self.parent.chassis_angle))
+        self.vy = self.speed * math.cos(math.radians(self.angle)) - self.parent.velocity * math.cos(math.radians(self.parent.chassis_angle))
 
         self.objdict = objdict
 

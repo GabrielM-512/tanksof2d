@@ -33,9 +33,12 @@ def transparent_surface(width, height):
 
 class Tank:
 
-
-    MOVEMENT_SPEED = 5
     ROTATION_SPEED = 1
+
+    ACCELERATION = 0.5
+    DECELERATION = 0.5
+
+    MAX_SPEED = 7
 
     BULLET_SPAWN_OFFSET = 20
 
@@ -76,6 +79,8 @@ class Tank:
 
         self.chassis_angle : float = 0
         self.turret_angle : float = 0
+
+        self.velocity : float = 0
 
         self.hitbox = Hitbox(self.chassis_display, 10, 10)
         self.bullets = []

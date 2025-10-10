@@ -133,6 +133,7 @@ class GameManager:
 
         if self.do_reset:
             self.reset()
+            self.do_reset = False
 
         self.shootcooldown -= deltatime
         self.handle_events()
@@ -168,7 +169,8 @@ class GameManager:
             ))) % 360
         except ZeroDivisionError:
             enemydir = 0  # same point
-        if not (0 <= self.othertank.rect.centerx + 100 <= self.screen.get_width() and 0 <= self.othertank.rect.centery + 100 <= self.screen.get_height()):
+
+        if not (0 <= self.othertank.rect.centerx + 100 <= self.screen.get_width() and 0 <= self.othertank.rect.centery + 100 <= self.screen.get_height()) and self.othertank.health > 0:
             enemy_dir_display = pygame.transform.rotate(self.enemy_dir_display_base, enemydir)
             enemydirrect = enemy_dir_display.get_rect()
             enemydirrect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2 - 400)
@@ -218,15 +220,35 @@ class GameManager:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.tank.rect.x -= self.tank.MOVEMENT_SPEED * math.sin(math.radians(self.tank.chassis_angle))
-            self.tank.rect.y -= self.tank.MOVEMENT_SPEED * math.cos(math.radians(self.tank.chassis_angle))
+            self.tank.velocity -= self.tank.ACCELERATION
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.tank.rect.x += self.tank.MOVEMENT_SPEED * math.sin(math.radians(self.tank.chassis_angle))
-            self.tank.rect.y += self.tank.MOVEMENT_SPEED * math.cos(math.radians(self.tank.chassis_angle))
+            self.tank.velocity += self.tank.ACCELERATION
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.tank.chassis_angle += self.tank.ROTATION_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.tank.chassis_angle -= self.tank.ROTATION_SPEED
+
+        if not (keys[pygame.K_w] or keys[pygame.K_s] or keys[pygame.K_UP] or keys[pygame.K_DOWN]):
+            if self.tank.velocity > 0:
+                if self.tank.velocity > self.tank.DECELERATION:
+                    self.tank.velocity -= self.tank.DECELERATION
+                else:
+                    self.tank.velocity = 0
+
+            if self.tank.velocity < 0:
+                if self.tank.velocity < -self.tank.DECELERATION:
+                    self.tank.velocity += self.tank.DECELERATION
+                else:
+                    self.tank.velocity = 0
+
+        if self.tank.velocity > self.tank.MAX_SPEED:
+            self.tank.velocity = self.tank.MAX_SPEED
+        if self.tank.velocity < -self.tank.MAX_SPEED:
+            self.tank.velocity = -self.tank.MAX_SPEED
+
+
+        self.tank.rect.x += self.tank.velocity * math.sin(math.radians(self.tank.chassis_angle))
+        self.tank.rect.y += self.tank.velocity * math.cos(math.radians(self.tank.chassis_angle))
 
         self.screenscrolling()
 

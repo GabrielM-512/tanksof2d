@@ -53,10 +53,15 @@ class GameManager:
 
         self.hpdisplay = hpfont.render(f"HP: {self.tank.health}", True, (255,255,255))
         self.pdisplay = hpfont.render(f"POINTS {self.points[0]}:{self.points[1]}", True, (255,255,255))
+        self.resetdisplay = hpfont.render("You died! Reset with 'R'", True, (255, 255, 255))
+
+        self.bg_texture = pygame.image.load("./assets/background_mud.jpg")
 
         self.enemy_dir_display_base = pygame.Surface((20, 20))
 
         self.disconnect = False
+
+        self.has_added_point = False
 
         try:
             self.connection.connect()
@@ -115,6 +120,11 @@ class GameManager:
                         self.reset(initiate=True)
     
     def update(self, framecount, deltatime):
+
+        for i in range(-2, self.screen.get_width() // self.bg_texture.get_width() + 2):
+            for j in range(-2, self.screen.get_height() // self.bg_texture.get_height() + 2):
+                self.screen.blit(self.bg_texture, (i * self.bg_texture.get_width() - (self.screenscroll[0] % self.bg_texture.get_width()), j * self.bg_texture.get_height() - (self.screenscroll[1] % self.bg_texture.get_height())))
+
         if self.screen is None:
             raise Exception("Screen was not defined")
 
@@ -128,10 +138,15 @@ class GameManager:
         self.handle_events()
         self.handle_input()
 
-        if self.tank.health <= 0 and self.othertank.health > 0 and self.tank.living:
+        if self.tank.health <= 0 and self.othertank.health > 0 and not self.has_added_point:
             self.points[1] += 1
-        elif self.tank.health > 0 and self.othertank.health <= 0 and self.othertank.living:
+            self.has_added_point = True
+        elif self.tank.health > 0 and self.othertank.health <= 0 and not self.has_added_point:
             self.points[0] += 1
+            self.has_added_point = True
+
+        if self.tank.health <= 0:
+            self.screen.blit(self.resetdisplay, (self.screen.get_width() // 2 - self.resetdisplay.get_width() // 2, 300))
 
         self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
@@ -161,7 +176,7 @@ class GameManager:
 
         self.tank.collisions(self.objdict, self.othertankID)
 
-        if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict) > 1:
+        if framecount % self.UPDATEFREQUENCY == 0 and len(self.senddict) > 0:
             self.connection.send(self.senddict)
             self.senddict.clear()
             self.senddict["actions"] = []
@@ -175,9 +190,16 @@ class GameManager:
 
                 self.othertank.health = 3
 
-                self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
-                self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)
+                self.has_added_point = False
 
+                self.tank.chassis_angle = 0
+                self.othertank.chassis_angle = 0
+                try: 
+                    self.objdict["tank:0"].rect.center = (GameManager.SCREENLIMIT + 100, GameManager.SCREENLIMIT + 100)
+                    self.objdict["tank:1"].rect.center = (self.screen.get_width() - GameManager.SCREENLIMIT + 100, self.screen.get_height() - GameManager.SCREENLIMIT + 100)
+                except Exception as e:
+                    print(e, " in reset()")
+                
                 if initiate:
                     if not "reset" in self.senddict["actions"]:
                         self.senddict["actions"].append("reset")

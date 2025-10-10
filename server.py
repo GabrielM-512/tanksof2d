@@ -10,11 +10,13 @@ modes = {
 
 server = None
 
-hostname = socket.gethostname()
-IPAddr = socket.gethostbyname(hostname)
+HOST = "0.0.0.0"
+PORT = 5000
 
-print(f"Server IP: {IPAddr}")
+print(f"Server IP: {HOST}")
 print("Server version 1.0")
+
+clients = []  # track connected clients
 
 try:
     mode = modes[min(max(int(input("Available Gamemodes:\n"
@@ -22,14 +24,11 @@ try:
                                    " PVE: 1\n"
                                    "Select gamemode: ")), 0), 1)]
     print(f"Selected Mode: {mode}")
+
 except ValueError:
     print("Invalid mode, set to PVE")
     mode = "PVE"
 
-HOST = "0.0.0.0"
-PORT = 5000
-
-clients = []  # track connected clients
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr}")

@@ -5,17 +5,17 @@ import warnings
 from src.system.Hitbox import Hitbox
 
 class Bullet:
-    def __init__(self, parent, nozzle_position, angle, objdict : dict):
+    def __init__(self, parent, spawn_position, angle, objdict : dict):
         self.parent = parent
 
         self.icon_base = pygame.image.load("assets/PNG/Effects/Medium_Shell.png")
         self.icon_display = self.icon_base.__copy__()
 
-        self.hitbox = Hitbox(self.icon_display, nozzle_position[0], nozzle_position[1])
+        self.hitbox = Hitbox(self.icon_display, spawn_position[0], spawn_position[1])
         self.rect = self.icon_base.get_rect()
 
-        self.rect.centerx = nozzle_position[0]
-        self.rect.centery = nozzle_position[1]
+        self.rect.centerx = spawn_position[0]
+        self.rect.centery = spawn_position[1]
 
         self.speed = 15
         self.angle = angle
@@ -27,7 +27,7 @@ class Bullet:
 
         self.objdict = objdict
 
-    def update(self, screen : pygame.surface.Surface, screenscrolldif):
+    def update(self, screen : pygame.Surface, screenscrolldif: pygame.Vector2) -> None:
         self.rect.x -= self.vx + screenscrolldif[0]
         self.rect.y -= self.vy + screenscrolldif[1]
 
@@ -88,5 +88,3 @@ class Bullet:
             self.destroy()
         except KeyError:
             pass
-
-

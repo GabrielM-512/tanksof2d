@@ -9,7 +9,7 @@ from src.system.jsonreader import parse_config
 
 game_manager = None
 
-def main():
+def main() -> None:
 	global game_manager
 	config = parse_config()
 
@@ -27,6 +27,7 @@ def main():
 	game_manager.senddict.clear()
 	game_manager.senddict["actions"] = []
 
+	delta_time = 0
 	timer = 2000
 	framecount = 0
 
@@ -40,6 +41,10 @@ def main():
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_ESCAPE:
+					game_manager.kill()
+
 
 		game_manager.screen.blit(loading_screen, (0, 0))
 		pygame.display.update()

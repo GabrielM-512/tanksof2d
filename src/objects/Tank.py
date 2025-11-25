@@ -86,7 +86,7 @@ class Tank:
         self.velocity : float = 0
 
         self.hitbox = Hitbox(self.chassis_display, 10, 10)
-        self.bullets = []
+        self.bullets: list[Bullet] = []
         self.maxBullets = 5
 
         self.offsetx = self.hitbox.x

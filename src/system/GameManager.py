@@ -146,7 +146,7 @@ class GameManager:
             self.points[0] += 1
             self.has_added_point = True
 
-        self.tank.update(self.screen, [0, 0], self.screenscrolldiff)
+        self.tank.update(self.screen, pygame.Vector2(0, 0), self.screenscrolldiff)
         self.othertank.update(self.screen, self.screenscrolldiff, self.screenscrolldiff)
 
         if self.tank.health <= 0:
@@ -234,7 +234,7 @@ class GameManager:
             warnings.warn("couldn't reset tank; tank was None", RuntimeWarning)
             self.kill()
 
-    def handle_input(self):
+    def handle_input(self,) -> None:
         if self.tank is None:
             return
 
@@ -262,16 +262,16 @@ class GameManager:
                 else:
                     self.tank.velocity = 0
 
-        if self.tank.velocity > self.tank.MAX_SPEED:
-            self.tank.velocity = self.tank.MAX_SPEED
-        if self.tank.velocity < -self.tank.MAX_SPEED:
-            self.tank.velocity = -self.tank.MAX_SPEED
-
         if keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             if self.tank.velocity > self.tank.MAX_TURN_SPEED:
                 self.tank.velocity -= self.tank.TURN_DECELERATION
             elif self.tank.velocity < -self.tank.MAX_TURN_SPEED:
                 self.tank.velocity += self.tank.TURN_DECELERATION
+
+        if self.tank.velocity > self.tank.MAX_SPEED:
+            self.tank.velocity = self.tank.MAX_SPEED
+        if self.tank.velocity < -self.tank.MAX_SPEED:
+            self.tank.velocity = -self.tank.MAX_SPEED
 
         self.tank.rect.x += self.tank.velocity * math.sin(math.radians(self.tank.chassis_angle))
         self.tank.rect.y += self.tank.velocity * math.cos(math.radians(self.tank.chassis_angle))

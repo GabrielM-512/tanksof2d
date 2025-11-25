@@ -1,5 +1,4 @@
 import pygame
-import sys
 import warnings
 
 pygame.init()
@@ -18,17 +17,17 @@ def main():
 
 	tank = Tank(config["playercolor"], is_local=True)
 	tank.rect.center = (config["resolution"]["width"] // 2, config["resolution"]["height"] // 2)
+
 	othertank = Tank(col=config["othercolor"])
 	othertank.rect.center = (config["resolution"]["width"] // 2, config["resolution"]["height"] // 2)
 
-	game_manager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tankobject=tank, other_tank=othertank)
+	game_manager = GameManager(ip=config["connection"]["IP"], port=config["connection"]["PORT"], tank_object=tank, other_tank=othertank)
 	game_manager.create_window(config["resolution"]["width"], config["resolution"]["height"], "Tank 2d")
 
 	game_manager.senddict.clear()
 	game_manager.senddict["actions"] = []
 
-	delta_time = 0
-
+	timer = 2000
 	framecount = 0
 
 	loading_screen = pygame.image.load("assets/loadingScreen.png").convert()
@@ -36,9 +35,17 @@ def main():
 		loading_screen,
 		(config["resolution"]["width"], config["resolution"]["height"])
 	)
-	game_manager.screen.blit(loading_screen, (0,0))
-	pygame.display.update()
-	pygame.time.wait(2000)
+
+	while timer > 0:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+
+		game_manager.screen.blit(loading_screen, (0, 0))
+		pygame.display.update()
+		delta_time = clock.tick(120)
+		timer -= delta_time
+
 	game_manager.senddict["actions"].append("playerLoadedIn")
 	game_manager.update(framecount,120)
 
@@ -80,4 +87,5 @@ if __name__ == "__main__":
 		warnings.warn("exited from keyboard interrupt", UserWarning)
 		# noinspection PyUnresolvedReferences
 		game_manager.kill()
-sys.exit(0)
+	except Exception as e:
+		print(f"Fatal Error: {e}")

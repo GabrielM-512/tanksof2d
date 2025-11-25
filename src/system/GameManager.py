@@ -16,7 +16,7 @@ class GameManager:
     SCREENLIMIT = 400
     SHOOTINGCOOLDOWN = 2000 # in ms
 
-    def __init__(self, ip: str = "localhost", port : int = "5000", tankobject : Tank = None, other_tank : Tank = None):
+    def __init__(self, ip: str = "localhost", port : int = "5000", tank_object : Tank = None, other_tank : Tank = None):
         
         self.playerId = None
         self.mode = None
@@ -25,7 +25,7 @@ class GameManager:
 
         self.shotbullets = 0
 
-        self.tank = tankobject
+        self.tank = tank_object
         self.tank.callback = self.hit_handler
 
         self.othertank = other_tank
